@@ -22,7 +22,7 @@
             android:layout_marginStart="4dp"
             android:backgroundTint="@color/YP_White"
             app:cornerRadius="16dp"
-            app:icon="@drawable/back"
+            app:icon="@drawable/ic_back_arrow_24"
             app:iconGravity="textStart"
             app:iconPadding="5dp"
             app:iconTint="@color/YP_Black"
@@ -37,7 +37,7 @@
             android:layout_weight="1"
             android:text="@string/settings"
             android:textSize="22sp"
-            android:fontFamily="@font/ys_display_regular"/>
+            android:textColor="@color/YP_Black"/>
 
     </LinearLayout>
 
@@ -59,9 +59,9 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="16dp"
                 android:layout_weight="1"
-                android:fontFamily="@font/ys_display_regular"
+                android:textColor="@color/YP_Black"
                 android:text="@string/darkTheme"
-                android:textSize="22sp"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -96,9 +96,9 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="16dp"
                 android:layout_weight="1"
-                android:fontFamily="@font/ys_display_regular"
+                android:textColor="@color/YP_Black"
                 android:text="@string/shareApp"
-                android:textSize="22sp"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -111,7 +111,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/shareapp" />
+                app:srcCompat="@drawable/ic_shareapp_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
@@ -133,9 +133,9 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="16dp"
                 android:layout_weight="1"
-                android:fontFamily="@font/ys_display_regular"
+                android:textColor="@color/YP_Black"
                 android:text="@string/writeToSupport"
-                android:textSize="22sp"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -148,7 +148,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/writetosupport" />
+                app:srcCompat="@drawable/ic_writetosupport_24" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -171,9 +171,9 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="16dp"
                 android:layout_weight="1"
-                android:fontFamily="@font/ys_display_regular"
+                android:textColor="@color/YP_Black"
                 android:text="@string/userAgreement"
-                android:textSize="22sp"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -186,7 +186,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/useragreement" />
+                app:srcCompat="@drawable/ic_useragreement_24" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

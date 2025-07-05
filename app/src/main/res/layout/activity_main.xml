@@ -38,10 +38,11 @@
         android:textColor="@color/YP_Black"
         android:textSize="22sp"
         app:cornerRadius="16dp"
-        app:icon="@drawable/find"
+        app:icon="@drawable/ic_find_24"
         app:iconGravity="textStart"
         app:iconPadding="5dp"
-        app:iconTint="@color/YP_Black" />
+        app:iconTint="@color/YP_Black"
+        android:textAllCaps="false"/>
 
     <Button
         android:id="@+id/mediaLibrBtn"
@@ -56,10 +57,11 @@
         android:text="@string/medialibrarry"
         android:textColor="@color/YP_Black"
         android:textSize="22sp"
-        app:icon="@drawable/medialibrarry"
+        app:icon="@drawable/ic_medialibrarry_24"
         app:iconGravity="textStart"
         app:iconTint="@color/YP_Black"
-        app:iconPadding="5dp"/>
+        app:iconPadding="5dp"
+        android:textAllCaps="false"/>
 
     <Button
         android:id="@+id/settingsBtn"
@@ -75,8 +77,9 @@
         android:text="@string/settings"
         android:textColor="@color/YP_Black"
         android:textSize="22sp"
-        app:icon="@drawable/settings"
+        app:icon="@drawable/ic_settings_24"
         app:iconGravity="textStart"
         app:iconTint="@color/YP_Black"
-        app:iconPadding="5dp"/>
+        app:iconPadding="5dp"
+        android:textAllCaps="false"/>
 </LinearLayout>
