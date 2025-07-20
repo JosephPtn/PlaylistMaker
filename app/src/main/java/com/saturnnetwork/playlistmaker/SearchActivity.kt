@@ -14,6 +14,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 
 class SearchActivity : AppCompatActivity() {
 
@@ -35,7 +36,7 @@ class SearchActivity : AppCompatActivity() {
         val btnClearInput: ImageButton = findViewById<ImageButton>(R.id.btnClearInput)
         btnClearInput.setOnClickListener {
             searchInput.text.clear()
-            btnClearInput.visibility = View.INVISIBLE
+            btnClearInput.isVisible = false
             // убираем клавиатуру
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchInput.windowToken, 0)
@@ -50,11 +51,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.isNullOrEmpty()) {
-
-                } else {
-                    btnClearInput.visibility = View.VISIBLE
-                }
+                btnClearInput.isVisible = !s.isNullOrEmpty()
             }
 
             override fun afterTextChanged(s: Editable?) {

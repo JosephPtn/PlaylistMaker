@@ -9,6 +9,8 @@
     <color name="text_edit_background">#FFFFFF</color>
     <color name="text_edit_fields">#1A1B22</color>
     <color name="text_edit_cursor_color">#3772E7</color>
+    <color name="text_edit_close_button">#1A1B22</color>
+    <color name="text_edit_text_color">#1A1B22</color>
     <color name="YP_White">#FFFFFF</color>
     <color name="YP_Black">#1A1B22</color>
 </resources>
