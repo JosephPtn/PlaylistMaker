@@ -11,6 +11,10 @@
     <color name="text_edit_cursor_color">#3772E7</color>
     <color name="text_edit_close_button">#AEAFB4</color>
     <color name="text_edit_text_color">#1A1B22</color>
+    <!-- activity_search -->
+    <color name="cardview_track_layout">#FFFFFF</color>
+    <color name="recycler_content_color">#000000</color>
+
     <color name="YP_White">#FFFFFF</color>
     <color name="YP_Black">#1A1B22</color>
 </resources>
