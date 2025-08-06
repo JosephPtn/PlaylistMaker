@@ -5,12 +5,15 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
+    android:background="@color/cardview_track_layout"
     tools:context=".SearchActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:background="@color/cardview_track_layout"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,18 +51,19 @@
         android:id="@+id/searchFieldContainer"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        app:layout_constraintTop_toBottomOf="@id/linearLayout"
+        android:background="@color/cardview_track_layout"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/linearLayout">
 
         <EditText
             android:id="@+id/searchInput"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/rounded_edittext"
             android:drawableStart="@drawable/search_icon"
             android:drawablePadding="8dp"
@@ -71,22 +75,34 @@
             android:maxLines="1"
             android:paddingStart="12dp"
             android:paddingEnd="40dp"
+            android:textColor="@color/text_edit_text_color"
             android:textColorHint="@color/text_edit_fields"
             android:textCursorDrawable="@drawable/custom_cursor"
-            android:textSize="16sp"
-            android:textColor="@color/text_edit_text_color" />
+            android:textSize="16sp" />
 
         <ImageButton
             android:id="@+id/btnClearInput"
             android:layout_width="40dp"
             android:layout_height="36dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="16dp"
             android:layout_gravity="end|center_vertical"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/ic_close_16"
             app:tint="@color/text_edit_close_button" />
     </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tracksRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/cardview_track_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchFieldContainer" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
