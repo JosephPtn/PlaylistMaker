@@ -13,4 +13,7 @@
     <string name="support_email_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="support_email_address">iPleasure@yandex.ru</string>
     <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="nothing_was_found">Ничего не нашлось</string>
+    <string name="connection_issues">Проблемы со связью\n\nЗагрузка не удалась. Проверьте\nподключение к интернету</string>
+    <string name="retry">Обновить</string>
 </resources>

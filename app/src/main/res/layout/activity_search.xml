@@ -78,7 +78,9 @@
             android:textColor="@color/text_edit_text_color"
             android:textColorHint="@color/text_edit_fields"
             android:textCursorDrawable="@drawable/custom_cursor"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
 
         <ImageButton
             android:id="@+id/btnClearInput"
@@ -103,6 +105,47 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchFieldContainer" />
+
+    <ImageView
+        android:id="@+id/imgError"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="210dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/textError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="346dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="@font/ys_display_medium"
+        android:maxLines="4"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textColor="@color/text_error"
+        android:textSize="19sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/retry_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="458dp"
+        android:backgroundTint="@color/btn_retry_color"
+        android:text="@string/retry"
+        android:textColor="@color/btn_retry_text"
+        app:cornerRadius="54dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAllCaps="false" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,10 +6,13 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,13 +20,35 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+data class SearchResponse(
+    val resultCount: Int,
+    val results: ArrayList<Track>
+)
+
+interface ItunesApiService {
+    @GET("/search?entity=song")
+    fun search(@Query("term") text: String): Call<SearchResponse>
+}
 
 class SearchActivity : AppCompatActivity() {
 
     private var globalSearchText: String = ""
     private lateinit var searchInput: EditText
 
-    private val tracks: ArrayList<Track> = arrayListOf(
+    private lateinit var imgError: ImageView
+    private lateinit var textError: TextView
+    private lateinit var retryButton: Button
+
+    private val tracks: ArrayList<Track> = ArrayList()
+    /*private val tracks: ArrayList<Track> = arrayListOf(
         Track(
             trackName = "Smells Like Teen Spirit",
             artistName = "Nirvana",
@@ -54,12 +79,27 @@ class SearchActivity : AppCompatActivity() {
             trackTime = "5:03",
             artworkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg"
         )
-    )
+    )*/
     private lateinit var adapter: TrackAdapter
+
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://itunes.apple.com")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val itunesService = retrofit.create(ItunesApiService::class.java)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+        imgError = findViewById(R.id.imgError)
+        imgError.visibility = View.INVISIBLE
+        textError = findViewById(R.id.textError)
+        textError.visibility = View.INVISIBLE
+        retryButton = findViewById(R.id.retry_button)
+        retryButton.visibility = View.INVISIBLE
 
         val recyclerView = findViewById<RecyclerView>(R.id.tracksRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -80,6 +120,10 @@ class SearchActivity : AppCompatActivity() {
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchInput.windowToken, 0)
             searchInput.clearFocus()
+            imgError.visibility = View.INVISIBLE
+            textError.visibility = View.INVISIBLE
+            tracks.clear()
+            adapter.notifyDataSetChanged()
 
         }
 
@@ -98,6 +142,64 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         searchInput.addTextChangedListener(simpleTextWatcher)
+
+        fun onApiError() {
+            tracks.clear()
+            textError.text = getString(R.string.connection_issues)
+            textError.visibility = View.VISIBLE
+            imgError.setImageResource(R.drawable.ic_connection_issues)
+            imgError.visibility = View.VISIBLE
+            retryButton.visibility = View.VISIBLE
+            adapter.notifyDataSetChanged()
+        }
+
+        fun startApiSearch() {
+            if (globalSearchText.isNotBlank()) {
+                itunesService.search(searchInput.text.toString()).enqueue(object :
+                    Callback<SearchResponse> {
+                    override fun onResponse(
+                        call: Call<SearchResponse>,
+                        response: Response<SearchResponse>
+                    ) {
+                        if (response.code() == 200) {
+                            tracks.clear()
+                            retryButton.visibility = View.INVISIBLE
+                            if (response.body()?.results?.isNotEmpty() == true) {
+                                tracks.addAll(response.body()?.results!!)
+                            }
+                            if (tracks.isEmpty()) {
+                                imgError.setImageResource(R.drawable.ic_no_results)
+                                imgError.visibility = View.VISIBLE
+                                textError.text = getString(R.string.nothing_was_found)
+                                textError.visibility = View.VISIBLE
+                                tracks.clear()
+                            } else {
+                                imgError.visibility = View.INVISIBLE
+                                textError.visibility = View.INVISIBLE
+                            }
+                            adapter.notifyDataSetChanged()
+                        } else {
+                            onApiError()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
+                        onApiError()
+                    }
+
+                })
+            }
+        }
+        searchInput.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                startApiSearch()
+            }
+            false
+        }
+
+        retryButton.setOnClickListener {
+            startApiSearch()
+        }
 
         adapter = TrackAdapter(tracks)
         recyclerView.adapter = adapter
