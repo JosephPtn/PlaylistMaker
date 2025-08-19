@@ -20,6 +20,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.saturnnetwork.playlistmaker.data_class.SearchResponse
+import com.saturnnetwork.playlistmaker.interface_.ItunesApiService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,16 +29,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-
-data class SearchResponse(
-    val resultCount: Int,
-    val results: ArrayList<Track>
-)
-
-interface ItunesApiService {
-    @GET("/search?entity=song")
-    fun search(@Query("term") text: String): Call<SearchResponse>
-}
 
 class SearchActivity : AppCompatActivity() {
 
