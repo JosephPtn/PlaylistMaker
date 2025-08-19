@@ -12,5 +12,7 @@
     <string name="support_email_subject">Thank you to the developers of Playlist Maker for an awesome app!</string>
     <string name="support_email_address">iPleasure@yandex.ru</string>
     <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
-    androidCourseUrl
+    <string name="nothing_was_found">Nothing was found</string>
+    <string name="connection_issues">Connection issues\n\nLoading failed. Check\nyour internet connection</string>
+    <string name="retry">Retry</string>
 </resources>
