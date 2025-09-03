@@ -6,5 +6,6 @@ data class Track (
     var trackName: String,
     var artistName: String,
     @SerializedName("trackTimeMillis") var trackTime: Long,
-    var artworkUrl100: String
+    var artworkUrl100: String,
+    var trackId: String
 )

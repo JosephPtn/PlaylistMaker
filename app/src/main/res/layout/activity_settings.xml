@@ -61,15 +61,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Switch
-                android:id="@+id/switch1"
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/themeSwitcher"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
+                app:thumbTint="@color/switch_thumb_tint"
+                app:trackTint="@color/switch_track_tint"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

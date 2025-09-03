@@ -1,9 +1,11 @@
 package com.saturnnetwork.playlistmaker
 
+import android.content.SharedPreferences
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -28,5 +30,15 @@ class TrackViewHolder (itemView: View): RecyclerView.ViewHolder(itemView){
             .error(R.drawable.placeholder)
             .into(trackNameImage)
 
+        itemView.setOnClickListener {
+            val sharedPrefs: SharedPreferences = itemView.context.getSharedPreferences("sharedPrefs", MODE_PRIVATE)
+            val searchHistory: SearchHistory = SearchHistory(sharedPrefs)
+            //searchHistory.clear()
+            searchHistory.write(track)
+            println(searchHistory.read())
+
+
+        }
     }
+
 }
