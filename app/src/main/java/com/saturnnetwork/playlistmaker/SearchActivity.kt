@@ -280,7 +280,6 @@ class SearchActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {
                 globalSearchText = s?.toString() ?: ""
-                println("")
             }
         }
         searchInput.addTextChangedListener(simpleTextWatcher)
