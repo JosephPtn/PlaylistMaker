@@ -60,6 +60,8 @@ class SearchActivity : AppCompatActivity() {
 
     private var tracksHistory: ArrayList<Track> = ArrayList()
 
+    private var suppressUIUpdate = false
+
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         when (key) {
             "prefsHistory" -> {
@@ -159,6 +161,10 @@ class SearchActivity : AppCompatActivity() {
 
                         constraintSet.clone(constraintLayout)
 
+                        val buttonHeight = clear_history_button.height
+                        val margin = (24 * resources.displayMetrics.density).toInt()
+                        val maxHeight = buttonHeight + margin
+
                         constraintSet.connect(
                             R.id.tracksRecyclerView,
                             ConstraintSet.TOP,
@@ -167,13 +173,7 @@ class SearchActivity : AppCompatActivity() {
                             (8 * resources.displayMetrics.density).toInt()
                         )
 
-                        constraintSet.connect(
-                            R.id.tracksRecyclerView,
-                            ConstraintSet.BOTTOM,
-                            R.id.clear_history_button,
-                            ConstraintSet.BOTTOM,
-                            (24 * resources.displayMetrics.density).toInt()
-                        )
+                        constraintSet.clear(R.id.tracksRecyclerView, ConstraintSet.BOTTOM)
 
                         constraintSet.connect(
                             R.id.tracksRecyclerView,
@@ -190,8 +190,55 @@ class SearchActivity : AppCompatActivity() {
                         )
 
                         constraintSet.applyTo(constraintLayout)
+
+                        val params = recyclerView.layoutParams as ConstraintLayout.LayoutParams
+                        params.height = ConstraintLayout.LayoutParams.WRAP_CONTENT
+                        recyclerView.layoutParams = params
+                        recyclerView.isNestedScrollingEnabled = true
+
+
                         adapterSearchHistory = TrackAdapter(tracksHistory)
                         recyclerView.adapter = adapterSearchHistory
+
+                        // Проверка, вышел ли RecyclerView за границу
+                        recyclerView.post {
+                            if (recyclerView.canScrollVertically(1)) {
+                                constraintSet.clear(R.id.clear_history_button, ConstraintSet.TOP)
+                                constraintSet.connect(
+                                    R.id.clear_history_button,
+                                    ConstraintSet.BOTTOM,
+                                    ConstraintSet.PARENT_ID,
+                                    ConstraintSet.BOTTOM,
+                                    (24 * resources.displayMetrics.density).toInt()
+                                )
+
+                                constraintSet.connect(
+                                    R.id.tracksRecyclerView,
+                                    ConstraintSet.BOTTOM,
+                                    R.id.clear_history_button,
+                                    ConstraintSet.TOP,
+                                    (24 * resources.displayMetrics.density).toInt()
+                                )
+                                constraintSet.applyTo(constraintLayout)
+
+                                val params = recyclerView.layoutParams as ConstraintLayout.LayoutParams
+                                params.height = 0
+                                params.matchConstraintMaxHeight = Int.MAX_VALUE
+                                recyclerView.layoutParams = params
+                                recyclerView.isNestedScrollingEnabled = true
+
+                            } else {
+                                constraintSet.clear(R.id.clear_history_button, ConstraintSet.BOTTOM)
+                                constraintSet.connect(
+                                    R.id.clear_history_button,
+                                    ConstraintSet.TOP,
+                                    R.id.tracksRecyclerView,
+                                    ConstraintSet.BOTTOM,
+                                    (24 * resources.displayMetrics.density).toInt()
+                                )
+                                constraintSet.applyTo(constraintLayout)
+                            }
+                        }
                     }
 
                 }
@@ -235,8 +282,15 @@ class SearchActivity : AppCompatActivity() {
                         ConstraintSet.END
                     )
 
-                    recyclerView.adapter = adapter
                     constraintSet.applyTo(constraintLayout)
+
+                    val params = recyclerView.layoutParams as ConstraintLayout.LayoutParams
+                    params.height = 0
+                    params.matchConstraintMaxHeight = Int.MAX_VALUE
+                    recyclerView.layoutParams = params
+                    recyclerView.isNestedScrollingEnabled = true
+
+                    recyclerView.adapter = adapter
 
                 }
             }
@@ -253,16 +307,27 @@ class SearchActivity : AppCompatActivity() {
 
         val btnClearInput: ImageButton = findViewById<ImageButton>(R.id.btnClearInput)
         btnClearInput.setOnClickListener {
+
+            suppressUIUpdate = true
+
             searchInput.text.clear()
             btnClearInput.isVisible = false
-            // убираем клавиатуру
+
+            updateUIComposition("search_result")
+
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchInput.windowToken, 0)
             searchInput.clearFocus()
+
             imgError.visibility = View.INVISIBLE
             textError.visibility = View.INVISIBLE
+
             tracks.clear()
             adapter.notifyDataSetChanged()
+
+            searchInput.post {
+                suppressUIUpdate = false
+            }
         }
 
         btnClearInput.visibility = View.INVISIBLE
@@ -273,8 +338,10 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 btnClearInput.isVisible = !s.isNullOrEmpty()
-                if (searchInput.hasFocus() && s?.isEmpty() == true) {
+                if (!suppressUIUpdate && searchInput.hasFocus() && s?.isEmpty() == true) {
                     updateUIComposition("search_history")
+                } else {
+                    updateUIComposition("search_result")
                 }
             }
 
