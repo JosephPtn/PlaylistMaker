@@ -3,6 +3,7 @@ package com.saturnnetwork.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Resources
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -202,43 +203,62 @@ class SearchActivity : AppCompatActivity() {
 
                         // Проверка, вышел ли RecyclerView за границу
                         recyclerView.post {
-                            if (recyclerView.canScrollVertically(1)) {
-                                constraintSet.clear(R.id.clear_history_button, ConstraintSet.TOP)
-                                constraintSet.connect(
-                                    R.id.clear_history_button,
-                                    ConstraintSet.BOTTOM,
-                                    ConstraintSet.PARENT_ID,
-                                    ConstraintSet.BOTTOM,
-                                    (24 * resources.displayMetrics.density).toInt()
-                                )
+                            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                            val lastPos = adapterSearchHistory.itemCount - 1
+                            val lastView = layoutManager.findViewByPosition(lastPos)
 
-                                constraintSet.connect(
-                                    R.id.tracksRecyclerView,
-                                    ConstraintSet.BOTTOM,
-                                    R.id.clear_history_button,
-                                    ConstraintSet.TOP,
-                                    (24 * resources.displayMetrics.density).toInt()
-                                )
-                                constraintSet.applyTo(constraintLayout)
+                            if (lastView != null) {
+                                val viewLocation = IntArray(2)
+                                lastView.getLocationOnScreen(viewLocation)
+                                val lastViewBottom = viewLocation[1] + lastView.height
 
-                                val params = recyclerView.layoutParams as ConstraintLayout.LayoutParams
-                                params.height = 0
-                                params.matchConstraintMaxHeight = Int.MAX_VALUE
-                                recyclerView.layoutParams = params
-                                recyclerView.isNestedScrollingEnabled = true
+                                val navBarHeight = ViewCompat.getRootWindowInsets(recyclerView)
+                                    ?.getInsets(WindowInsetsCompat.Type.navigationBars())
+                                    ?.bottom ?: 0
 
-                            } else {
-                                constraintSet.clear(R.id.clear_history_button, ConstraintSet.BOTTOM)
-                                constraintSet.connect(
-                                    R.id.clear_history_button,
-                                    ConstraintSet.TOP,
-                                    R.id.tracksRecyclerView,
-                                    ConstraintSet.BOTTOM,
-                                    (24 * resources.displayMetrics.density).toInt()
-                                )
+                                val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+                                val safeScreenHeight = screenHeight - navBarHeight
+
+                                val isLastItemVisible = lastViewBottom <= safeScreenHeight
+
+                                if (!isLastItemVisible) {
+                                    constraintSet.clear(R.id.clear_history_button, ConstraintSet.TOP)
+                                    constraintSet.connect(
+                                        R.id.clear_history_button,
+                                        ConstraintSet.BOTTOM,
+                                        ConstraintSet.PARENT_ID,
+                                        ConstraintSet.BOTTOM,
+                                        (24 * resources.displayMetrics.density).toInt()
+                                    )
+                                    constraintSet.connect(
+                                        R.id.tracksRecyclerView,
+                                        ConstraintSet.BOTTOM,
+                                        R.id.clear_history_button,
+                                        ConstraintSet.TOP,
+                                        (24 * resources.displayMetrics.density).toInt()
+                                    )
+
+                                    val params = recyclerView.layoutParams as ConstraintLayout.LayoutParams
+                                    params.height = 0
+                                    params.matchConstraintMaxHeight = Int.MAX_VALUE
+                                    recyclerView.layoutParams = params
+                                    recyclerView.isNestedScrollingEnabled = true
+
+                                } else {
+                                    constraintSet.clear(R.id.clear_history_button, ConstraintSet.BOTTOM)
+                                    constraintSet.connect(
+                                        R.id.clear_history_button,
+                                        ConstraintSet.TOP,
+                                        R.id.tracksRecyclerView,
+                                        ConstraintSet.BOTTOM,
+                                        (24 * resources.displayMetrics.density).toInt()
+                                    )
+                                }
+
                                 constraintSet.applyTo(constraintLayout)
                             }
                         }
+
                     }
 
                 }
