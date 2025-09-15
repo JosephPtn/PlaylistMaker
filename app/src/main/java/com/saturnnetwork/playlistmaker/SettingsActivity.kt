@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -12,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.net.toUri
+import com.google.android.material.switchmaterial.SwitchMaterial
+import androidx.core.content.edit
 
 class SettingsActivity : AppCompatActivity() {
     @SuppressLint("QueryPermissionsNeeded")
@@ -22,6 +25,19 @@ class SettingsActivity : AppCompatActivity() {
         val backBtn = findViewById<Button>(R.id.backBtn)
         backBtn.setOnClickListener {
             finish()
+        }
+
+        val sharedPrefs = getSharedPreferences("settings_activity_preferences", MODE_PRIVATE)
+        val themeSwitcherPosition: Boolean = sharedPrefs.getBoolean("themeSwitcherPosition", false)
+
+        val themeSwitcher: SwitchMaterial =  findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        themeSwitcher.isChecked = themeSwitcherPosition
+
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+            sharedPrefs.edit {
+                putBoolean("themeSwitcherPosition", checked)
+            }
         }
 
         val shareAppTextView: TextView = findViewById<Button>(R.id.share_app)

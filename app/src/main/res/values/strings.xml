@@ -6,7 +6,7 @@
     <string name="share_app">Share App</string>
     <string name="contact_support">Contact Support</string>
     <string name="dark_mode">Dark Mode</string>
-    <string name="user_agreement">Пользовательское приложение</string>
+    <string name="user_agreement">User agreement</string>
     <string name="android_course_url">https://practicum.yandex.ru/android-developer/?from=catalog</string>
     <string name="support_email_body">Thanks to the developers for the awesome app!</string>
     <string name="support_email_subject">Thank you to the developers of Playlist Maker for an awesome app!</string>
@@ -15,4 +15,6 @@
     <string name="nothing_was_found">Nothing was found</string>
     <string name="connection_issues">Connection issues\n\nLoading failed. Check\nyour internet connection</string>
     <string name="retry">Retry</string>
+    <string name="you_searched">You searched</string>
+    <string name="clear_history">Clear history</string>
 </resources>
