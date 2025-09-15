@@ -68,7 +68,11 @@ class PlayerActivity : AppCompatActivity() {
                 .into(albumArtView)
         }
 
-        getCoverArtwork(track.artworkUrl100.replaceAfterLast('/',"512x512bb.jpg"))
+        if (!track.artworkUrl100.isEmpty()) {
+            getCoverArtwork(track.artworkUrl100.replaceAfterLast('/',"512x512bb.jpg"))
+        } else {
+            albumArtView.setImageResource(R.drawable.placeholder)
+        }
 
         //Track(trackName=Here Comes the Weekend (feat. Eminem), artistName=P!nk, trackTime=265424, artworkUrl100=https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/2c/b0/de/2cb0de7b-4559-d885-36f8-271c950cba34/886443562097.jpg/100x100bb.jpg, trackId=545398146, collectionName=The Truth About Love, releaseDate=2012-09-14T07:00:00Z, primaryGenreName=Pop, country=USA)
         if (track.trackName.isNotBlank()) {
