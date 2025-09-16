@@ -1,5 +1,7 @@
 package com.saturnnetwork.playlistmaker
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -29,10 +31,12 @@ class PlayerActivity : AppCompatActivity() {
             insets
         }
 
-        val intent = intent
-        val jsonTrack = intent.getStringExtra("jsonTrack")
-        val type = object : TypeToken<Track>() {}.type
-        val track =  Gson().fromJson<Track>(jsonTrack, type)
+        val track: Track? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("track", Track::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra("track")
+        }
 
         val trackNamePlayerActivity = findViewById<TextView>(R.id.trackNamePlayerActivity)
         val artistNamePlayerActivity = findViewById<TextView>(R.id.artistNamePlayerActivity)
@@ -59,55 +63,60 @@ class PlayerActivity : AppCompatActivity() {
             finish()
         }
 
+        fun pxToDp(px: Float, context: Context): Float {
+            return px / context.resources.displayMetrics.density
+        }
+
         fun getCoverArtwork(url: String) {
             Glide.with(this)
                 .load(url)
-                .transform(RoundedCorners(2))
+                .transform(RoundedCorners(pxToDp(8F, this).toInt()))
                 .placeholder(R.drawable.placeholder)
                 .error(R.drawable.placeholder)
                 .into(albumArtView)
         }
 
-        if (!track.artworkUrl100.isEmpty()) {
-            getCoverArtwork(track.artworkUrl100.replaceAfterLast('/',"512x512bb.jpg"))
-        } else {
-            albumArtView.setImageResource(R.drawable.placeholder)
-        }
+        track?.let {
+            if (!track.artworkUrl100.isEmpty()) {
+                getCoverArtwork(track.artworkUrl100.replaceAfterLast('/',"512x512bb.jpg"))
+            } else {
+                albumArtView.setImageResource(R.drawable.placeholder)
+            }
 
-        //Track(trackName=Here Comes the Weekend (feat. Eminem), artistName=P!nk, trackTime=265424, artworkUrl100=https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/2c/b0/de/2cb0de7b-4559-d885-36f8-271c950cba34/886443562097.jpg/100x100bb.jpg, trackId=545398146, collectionName=The Truth About Love, releaseDate=2012-09-14T07:00:00Z, primaryGenreName=Pop, country=USA)
-        if (track.trackName.isNotBlank()) {
-            trackNamePlayerActivity.text = track.trackName
-        }
-        if (track.artistName.isNotBlank()) {
-            artistNamePlayerActivity.text = track.artistName
-        }
-        if (track.collectionName.isNotBlank()) {
-            trackAlbum_value.text = track.collectionName
-        } else {
-            trackAlbum_value.visibility = View.GONE
-            trackAlbum_text.visibility = View.GONE
-        }
+            if (track.trackName.isNotBlank()) {
+                trackNamePlayerActivity.text = track.trackName
+            }
+            if (track.artistName.isNotBlank()) {
+                artistNamePlayerActivity.text = track.artistName
+            }
+            if (track.collectionName.isNotBlank()) {
+                trackAlbum_value.text = track.collectionName
+            } else {
+                trackAlbum_value.visibility = View.GONE
+                trackAlbum_text.visibility = View.GONE
+            }
 
-        track.trackTime?.let {
-            playbackProgress.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(it)
-            trackDuration_value.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime)
-        }
+            track.trackTime?.let {
+                playbackProgress.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(it)
+                trackDuration_value.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime)
+            }
 
-        if (track.releaseDate.isNotBlank()) {
-            val dateTime = ZonedDateTime.parse(track.releaseDate)
-            val year = dateTime.year
-            releaseYear_value.text = year.toString()
-        } else {
-            releaseYear_value.visibility = View.GONE
-            releaseYear_text.visibility = View.GONE
-        }
+            if (track.releaseDate.isNotBlank()) {
+                val dateTime = ZonedDateTime.parse(track.releaseDate)
+                val year = dateTime.year
+                releaseYear_value.text = year.toString()
+            } else {
+                releaseYear_value.visibility = View.GONE
+                releaseYear_text.visibility = View.GONE
+            }
 
-        if (track.primaryGenreName.isNotBlank()) {
-            trackGenre_value.text = track.primaryGenreName
-        }
+            if (track.primaryGenreName.isNotBlank()) {
+                trackGenre_value.text = track.primaryGenreName
+            }
 
-        if (track.country.isNotBlank()) {
-            country_value.text = track.country
+            if (track.country.isNotBlank()) {
+                country_value.text = track.country
+            }
         }
 
 

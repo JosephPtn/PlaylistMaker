@@ -1,7 +1,10 @@
 package com.saturnnetwork.playlistmaker
 
 import com.google.gson.annotations.SerializedName
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Track (
     var trackName: String,
     var artistName: String,
@@ -12,4 +15,4 @@ data class Track (
     var releaseDate: String,
     var primaryGenreName: String,
     var country: String,
-)
+) : Parcelable

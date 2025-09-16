@@ -39,14 +39,10 @@ class TrackViewHolder (itemView: View): RecyclerView.ViewHolder(itemView){
             searchHistory.write(track)
             //println(searchHistory.read())
 
-            val jsonTrack = Gson().toJson(track)
-            val intentToSearchActivity = Intent(
-                itemView.context,
-                PlayerActivity::class.java
-            )
-            intentToSearchActivity.putExtra("jsonTrack", jsonTrack)
-            itemView.context.startActivity(intentToSearchActivity)
 
+            val intent = Intent(itemView.context, PlayerActivity::class.java)
+            intent.putExtra("track", track)
+            itemView.context.startActivity(intent)
 
         }
     }
