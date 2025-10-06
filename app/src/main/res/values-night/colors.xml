@@ -21,6 +21,13 @@
     <color name="switch_thumb_tint">#3772E7</color>
     <color name="switch_track_tint">#9FBBF3</color>
 
+    <!-- activity_player-->
+    <color name="text_table">#AEAFB4</color>
+    <color name="text_value">#FFFFFF</color>
+    <color name="btn_addToPlaylist_addToFavoritesButton">#535459</color>
+    <color name="playbackControlColor1">#FFFFFF</color>
+    <color name="playbackControlColor2">#1A1B22</color>
+
     <color name="YP_White">#FFFFFF</color>
     <color name="YP_Black">#1A1B22</color>
 </resources>

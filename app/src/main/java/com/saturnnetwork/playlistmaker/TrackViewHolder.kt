@@ -1,5 +1,6 @@
 package com.saturnnetwork.playlistmaker
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.view.View
 import android.widget.ImageButton
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -35,8 +37,12 @@ class TrackViewHolder (itemView: View): RecyclerView.ViewHolder(itemView){
             val searchHistory: SearchHistory = SearchHistory(sharedPrefs)
             //searchHistory.clear()
             searchHistory.write(track)
-            println(searchHistory.read())
+            //println(searchHistory.read())
 
+
+            val intent = Intent(itemView.context, PlayerActivity::class.java)
+            intent.putExtra("track", track)
+            itemView.context.startActivity(intent)
 
         }
     }
