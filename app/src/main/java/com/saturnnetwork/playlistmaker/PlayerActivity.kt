@@ -1,8 +1,11 @@
 package com.saturnnetwork.playlistmaker
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -21,6 +24,75 @@ import java.time.ZonedDateTime
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
+
+    private var mediaPlayer = MediaPlayer()
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+    }
+
+    private var playerState = STATE_DEFAULT
+
+    private lateinit var playbackControlButton: ImageButton
+
+    private lateinit var playbackProgress: TextView
+
+    private fun preparePlayer(url: String) {
+        mediaPlayer.setDataSource(url)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            playerState = STATE_PREPARED
+        }
+        mediaPlayer.setOnCompletionListener {
+            playerState = STATE_PREPARED
+            playbackProgress.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0L)
+            playbackControlButton.setImageResource(R.drawable.play_button)
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        playbackControlButton.setImageResource(R.drawable.pause_button)
+        handler.post(updatePlaybackProgressRunnable)
+        playerState = STATE_PLAYING
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        playbackControlButton.setImageResource(R.drawable.play_button)
+        handler.removeCallbacks(updatePlaybackProgressRunnable)
+        playerState = STATE_PAUSED
+    }
+
+    private fun playbackControl() {
+        when(playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
+        }
+    }
+
+    private fun updatePlaybackProgress() {
+        if (playerState == STATE_PLAYING) {
+            playbackProgress.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+        }
+    }
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val updatePlaybackProgressRunnable = object : Runnable {
+        override fun run() {
+            updatePlaybackProgress()
+            handler.postDelayed(this, 300) // <-- самозапуск каждые 300 мс
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -35,12 +107,12 @@ class PlayerActivity : AppCompatActivity() {
             intent.getParcelableExtra("track", Track::class.java)
         } else {
             @Suppress("DEPRECATION")
-            intent.getParcelableExtra("track")
+            intent.getParcelableExtra("track") as? Track
         }
 
         val trackNamePlayerActivity = findViewById<TextView>(R.id.trackNamePlayerActivity)
         val artistNamePlayerActivity = findViewById<TextView>(R.id.artistNamePlayerActivity)
-        val playbackProgress = findViewById<TextView>(R.id.playbackProgress)
+        playbackProgress = findViewById<TextView>(R.id.playbackProgress)
         val trackDuration_text = findViewById<TextView>(R.id.trackDuration_text)
         val trackDuration_value = findViewById<TextView>(R.id.trackDuration_value)
         val trackAlbum_text = findViewById<TextView>(R.id.trackAlbum_text)
@@ -54,10 +126,14 @@ class PlayerActivity : AppCompatActivity() {
 
         val btnBackFromPlayer = findViewById<Button>(R.id.btnBackFromPlayer)
         val addToPlaylistButton = findViewById<ImageButton>(R.id.addToPlaylistButton)
-        val playbackControlButton = findViewById<ImageButton>(R.id.playbackControlButton)
+        playbackControlButton = findViewById<ImageButton>(R.id.playbackControlButton)
         val addToFavoritesButton = findViewById<ImageButton>(R.id.addToFavoritesButton)
 
         val albumArtView = findViewById<ImageView>(R.id.albumArtView)
+
+        playbackControlButton.setOnClickListener {
+            playbackControl()
+        }
 
         btnBackFromPlayer.setOnClickListener {
             finish()
@@ -97,11 +173,11 @@ class PlayerActivity : AppCompatActivity() {
             }
 
             track.trackTime?.let {
-                playbackProgress.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(it)
+                playbackProgress.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0L)
                 trackDuration_value.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime)
             }
 
-            if (track.releaseDate.isNotBlank()) {
+            if (!track?.releaseDate.isNullOrBlank()) {
                 val dateTime = ZonedDateTime.parse(track.releaseDate)
                 val year = dateTime.year
                 releaseYear_value.text = year.toString()
@@ -117,8 +193,26 @@ class PlayerActivity : AppCompatActivity() {
             if (track.country.isNotBlank()) {
                 country_value.text = track.country
             }
+
+            if (track.previewUrl.isNotBlank()) {
+                preparePlayer(track.previewUrl)
+            }
         }
 
 
+
+
     }
+
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
+        handler.removeCallbacksAndMessages(null)
+    }
+
 }

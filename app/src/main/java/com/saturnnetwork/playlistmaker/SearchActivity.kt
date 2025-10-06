@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.VelocityTracker
@@ -63,6 +65,10 @@ class SearchActivity : AppCompatActivity() {
 
     private var suppressUIUpdate = false
 
+    companion object {
+        private const val SEARCH_DELAY_MILLIS = 2000L
+    }
+
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         when (key) {
             "prefsHistory" -> {
@@ -72,45 +78,15 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    /*private val tracks: ArrayList<Track> = arrayListOf(
-        Track(
-            trackName = "Smells Like Teen Spirit",
-            artistName = "Nirvana",
-            trackTime = "5:01",
-            artworkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg"
-        ),
-        Track(
-            trackName = "Billie Jean",
-            artistName = "Michael Jackson",
-            trackTime = "4:35",
-            artworkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg"
-        ),
-        Track(
-            trackName = "Stayin' Alive",
-            artistName = "Bee Gees",
-            trackTime = "4:10",
-            artworkUrl100 = "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg"
-        ),
-        Track(
-            trackName = "Whole Lotta Love",
-            artistName = "Led Zeppelin",
-            trackTime = "5:33",
-            artworkUrl100 = "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-        ),
-        Track(
-            trackName = "Sweet Child O'Mine",
-            artistName = "Guns N' Roses",
-            trackTime = "5:03",
-            artworkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg"
-        )
-    )*/
-
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://itunes.apple.com")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
     private val itunesService = retrofit.create(ItunesApiService::class.java)
+
+    private val handler = Handler(Looper.getMainLooper())
+
 
 
 
@@ -351,25 +327,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         btnClearInput.visibility = View.INVISIBLE
-        val simpleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                btnClearInput.isVisible = !s.isNullOrEmpty()
-                if (!suppressUIUpdate && searchInput.hasFocus() && s?.isEmpty() == true) {
-                    updateUIComposition("search_history")
-                } else {
-                    updateUIComposition("search_result")
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                globalSearchText = s?.toString() ?: ""
-            }
-        }
-        searchInput.addTextChangedListener(simpleTextWatcher)
 
         clear_history_button.setOnClickListener {
             searchHistory.clear()
@@ -429,13 +387,49 @@ class SearchActivity : AppCompatActivity() {
                 })
             }
         }
-        searchInput.setOnEditorActionListener { _, actionId, _ ->
+
+        fun searchRequest() {
+            startApiSearch()
+        }
+
+        val searchRunnable = Runnable { searchRequest() }
+
+        fun searchDebounce() {
+            handler.removeCallbacks(searchRunnable)
+            handler.postDelayed(searchRunnable, SEARCH_DELAY_MILLIS)
+        }
+
+        val simpleTextWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                btnClearInput.isVisible = !s.isNullOrEmpty()
+                if (!suppressUIUpdate && searchInput.hasFocus() && s?.isEmpty() == true) {
+                    updateUIComposition("search_history")
+                } else {
+                    searchDebounce()
+                    updateUIComposition("search_result")
+                }
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                globalSearchText = s?.toString() ?: ""
+            }
+        }
+
+        searchInput.addTextChangedListener(simpleTextWatcher)
+
+        // old method
+        /*searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 updateUIComposition("search_result")
                 startApiSearch()
             }
             false
-        }
+        }*/
 
         retryButton.setOnClickListener {
             startApiSearch()
@@ -444,6 +438,7 @@ class SearchActivity : AppCompatActivity() {
         adapter = TrackAdapter(tracks)
 
         searchInput.requestFocus()
+
 
     }
 
@@ -461,5 +456,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         sharedPrefs.unregisterOnSharedPreferenceChangeListener(prefsListener)
+        handler.removeCallbacksAndMessages(null)
     }
 }
