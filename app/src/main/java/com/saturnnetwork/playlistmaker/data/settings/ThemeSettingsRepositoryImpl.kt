@@ -1,6 +1,7 @@
-package com.saturnnetwork.playlistmaker.domain.settings
+package com.saturnnetwork.playlistmaker.data.settings
 
 import android.content.SharedPreferences
+import com.saturnnetwork.playlistmaker.domain.settings.ThemeSettingsRepository
 
 class ThemeSettingsRepositoryImpl(
     private val sharedPrefs: SharedPreferences

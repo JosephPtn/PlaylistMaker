@@ -1,14 +1,11 @@
 package com.saturnnetwork.playlistmaker.ui.settings
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.edit
-import androidx.core.net.toUri
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.saturnnetwork.playlistmaker.App
 import com.saturnnetwork.playlistmaker.R

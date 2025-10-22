@@ -3,7 +3,7 @@ package com.saturnnetwork.playlistmaker.di
 import android.content.SharedPreferences
 import com.saturnnetwork.playlistmaker.domain.settings.ThemeSettingsInteractor
 import com.saturnnetwork.playlistmaker.domain.settings.ThemeSettingsInteractorImpl
-import com.saturnnetwork.playlistmaker.domain.settings.ThemeSettingsRepositoryImpl
+import com.saturnnetwork.playlistmaker.data.settings.ThemeSettingsRepositoryImpl
 
 // Создатель интерактора
 object ThemeSettingsInteractorCreator {

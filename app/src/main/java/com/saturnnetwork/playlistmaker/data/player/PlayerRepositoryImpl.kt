@@ -1,6 +1,7 @@
-package com.saturnnetwork.playlistmaker.domain.player
+package com.saturnnetwork.playlistmaker.data.player
 
 import android.media.MediaPlayer
+import com.saturnnetwork.playlistmaker.domain.player.PlayerRepository
 
 class PlayerRepositoryImpl : PlayerRepository {
 
