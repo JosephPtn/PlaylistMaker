@@ -1,48 +1,44 @@
-package com.saturnnetwork.playlistmaker
+package com.saturnnetwork.playlistmaker.ui.settings
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Switch
 import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.net.toUri
 import com.google.android.material.switchmaterial.SwitchMaterial
-import androidx.core.content.edit
+import com.saturnnetwork.playlistmaker.App
+import com.saturnnetwork.playlistmaker.R
+import com.saturnnetwork.playlistmaker.di.ThemeSettingsInteractorCreator
+import com.saturnnetwork.playlistmaker.domain.settings.ThemeSettingsInteractor
 
 class SettingsActivity : AppCompatActivity() {
-    @SuppressLint("QueryPermissionsNeeded")
+
+    private lateinit var interactor: ThemeSettingsInteractor
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+
+        val sharedPrefs = getSharedPreferences("settings_activity_preferences", MODE_PRIVATE)
+        interactor = ThemeSettingsInteractorCreator.create(sharedPrefs)
 
         val backBtn = findViewById<Button>(R.id.backBtn)
         backBtn.setOnClickListener {
             finish()
         }
 
-        val sharedPrefs = getSharedPreferences("settings_activity_preferences", MODE_PRIVATE)
-        val themeSwitcherPosition: Boolean = sharedPrefs.getBoolean("themeSwitcherPosition", false)
+        val themeSwitcher: SwitchMaterial = findViewById(R.id.themeSwitcher)
+        themeSwitcher.isChecked = interactor.isDarkModeEnabled()
 
-        val themeSwitcher: SwitchMaterial =  findViewById<SwitchMaterial>(R.id.themeSwitcher)
-        themeSwitcher.isChecked = themeSwitcherPosition
-
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
-            sharedPrefs.edit {
-                putBoolean("themeSwitcherPosition", checked)
-            }
+        themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
+            (applicationContext as App).switchTheme(isChecked)
+            interactor.setDarkMode(isChecked)
         }
 
-        val shareAppTextView: TextView = findViewById<Button>(R.id.share_app)
+        val shareAppTextView: TextView = findViewById(R.id.share_app)
         shareAppTextView.setOnClickListener {
-            val sendIntent: Intent = Intent().apply {
+            val sendIntent = Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.android_course_url))
                 type = "text/plain"
@@ -51,9 +47,8 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
 
-        val contactsSupportTextView: TextView = findViewById<Button>(R.id.contact_support)
+        val contactsSupportTextView: TextView = findViewById(R.id.contact_support)
         contactsSupportTextView.setOnClickListener {
-
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "message/rfc822"
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email_address)))
@@ -63,13 +58,11 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val userAgreementTextView: TextView = findViewById<Button>(R.id.user_agreement)
+        val userAgreementTextView: TextView = findViewById(R.id.user_agreement)
         userAgreementTextView.setOnClickListener {
-
-            val webpage: Uri = "https://yandex.ru/legal/practicum_offer/".toUri()
+            val webpage: Uri = Uri.parse("https://yandex.ru/legal/practicum_offer/")
             val intent = Intent(Intent.ACTION_VIEW, webpage)
             startActivity(intent)
         }
-
     }
 }

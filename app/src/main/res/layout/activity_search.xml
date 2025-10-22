@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
 
     android:background="@color/cardview_track_layout"
-    tools:context=".SearchActivity">
+    tools:context=".ui.search.SearchActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout"

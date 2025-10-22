@@ -1,9 +1,10 @@
-package com.saturnnetwork.playlistmaker
+package com.saturnnetwork.playlistmaker.data
 
 import android.content.SharedPreferences
-import com.google.gson.Gson
 import androidx.core.content.edit
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.saturnnetwork.playlistmaker.domain.models.Track
 
 class SearchHistory(private val prefsHistory: SharedPreferences) {
 

@@ -1,7 +1,7 @@
-package com.saturnnetwork.playlistmaker
+package com.saturnnetwork.playlistmaker.domain.models
 
-import com.google.gson.annotations.SerializedName
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
