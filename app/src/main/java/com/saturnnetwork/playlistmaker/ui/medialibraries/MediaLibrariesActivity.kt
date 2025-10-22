@@ -1,10 +1,8 @@
-package com.saturnnetwork.playlistmaker
+package com.saturnnetwork.playlistmaker.ui.medialibraries
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.saturnnetwork.playlistmaker.R
 
 class MediaLibrariesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
