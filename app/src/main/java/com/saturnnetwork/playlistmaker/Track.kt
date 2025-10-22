@@ -12,7 +12,8 @@ data class Track (
     var artworkUrl100: String,
     var trackId: String,
     var collectionName: String,
-    var releaseDate: String,
+    val releaseDate: String?,
     var primaryGenreName: String,
     var country: String,
+    var previewUrl: String,
 ) : Parcelable

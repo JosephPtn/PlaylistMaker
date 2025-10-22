@@ -2,6 +2,8 @@ package com.saturnnetwork.playlistmaker
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -21,6 +23,22 @@ class TrackViewHolder (itemView: View): RecyclerView.ViewHolder(itemView){
     private val artistName: TextView = itemView.findViewById(R.id.artistName)
     private val trackTime: TextView = itemView.findViewById(R.id.trackTime)
 
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
+    private var isClickAllowed = true
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
     fun bind(track: Track) {
         trackName.text = track.trackName
         artistName.text = track.artistName
@@ -33,16 +51,18 @@ class TrackViewHolder (itemView: View): RecyclerView.ViewHolder(itemView){
             .into(trackNameImage)
 
         itemView.setOnClickListener {
-            val sharedPrefs: SharedPreferences = itemView.context.getSharedPreferences("sharedPrefs", MODE_PRIVATE)
-            val searchHistory: SearchHistory = SearchHistory(sharedPrefs)
-            //searchHistory.clear()
-            searchHistory.write(track)
-            //println(searchHistory.read())
+            if (clickDebounce()) {
+                val sharedPrefs: SharedPreferences = itemView.context.getSharedPreferences("sharedPrefs", MODE_PRIVATE)
+                val searchHistory: SearchHistory = SearchHistory(sharedPrefs)
+                //searchHistory.clear()
+                searchHistory.write(track)
+                //println(searchHistory.read())
 
 
-            val intent = Intent(itemView.context, PlayerActivity::class.java)
-            intent.putExtra("track", track)
-            itemView.context.startActivity(intent)
+                val intent = Intent(itemView.context, PlayerActivity::class.java)
+                intent.putExtra("track", track)
+                itemView.context.startActivity(intent)
+            }
 
         }
     }
