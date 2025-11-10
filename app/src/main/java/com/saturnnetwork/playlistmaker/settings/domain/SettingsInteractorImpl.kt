@@ -14,20 +14,17 @@ class SettingsInteractorImpl(
         repository.saveThemeSetting(enabled)
     }
 
-    override fun buttonToShareApp(value: String): Intent {
-        return repository.buttonToShareApp(value)
+    override fun buttonToShareApp(): Int {
+        return repository.buttonToShareApp()
     }
 
-    override fun buttonToContactSupport(
-        email: String,
-        subject: String,
-        text: String
-    ): Intent {
-        return repository.buttonToContactSupport(email,subject,text)
+
+    override fun buttonToContactSupport(): List<Int>  {
+        return repository.buttonToContactSupport()
     }
 
-    override fun buttonToUserAgreement(url: String): Intent {
-        return repository.buttonToUserAgreement(url)
+    override fun buttonToUserAgreement(): Int {
+        return repository.buttonToUserAgreement()
     }
 
 

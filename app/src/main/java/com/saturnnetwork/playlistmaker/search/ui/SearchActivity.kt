@@ -62,6 +62,7 @@ class SearchActivity : AppCompatActivity() {
     fun updateUIComposition(composition: String, tracks: ArrayList<Track>, error: String?) {
         when (composition) {
             "history" -> {
+                listOf(binding.textError, binding.imgError).hide()
                 listOf(binding.youSearched, binding.tracksRecyclerView, binding.clearHistoryButton).show()
                 val constraintSet = ConstraintSet()
                 val constraintLayout = findViewById<ConstraintLayout>(R.id.activity_search)
@@ -297,7 +298,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         val searchRunnable = Runnable {
-            if (globalSearchText.isNotEmpty()) {
+            if (globalSearchText.isNotBlank()) {
                 viewModel.searchTracks(globalSearchText.toString()) }
             }
 

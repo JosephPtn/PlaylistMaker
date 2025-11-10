@@ -25,32 +25,19 @@ class SettingsRepositoryImpl(
         sharedPrefs.edit { putBoolean(KEY_THEME, enabled) }
     }
 
-    override fun buttonToShareApp(value: String): Intent {
-        val sendIntent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, value)
-            type = "text/plain"
-        }
-        return Intent.createChooser(sendIntent, null)
+    override fun buttonToShareApp(): Int {
+        return R.string.android_course_url
     }
 
-    override fun buttonToContactSupport(
-        email: String,
-        subject: String,
-        text: String
-    ): Intent {
-        val contactSupportIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "message/rfc822"
-            putExtra(Intent.EXTRA_EMAIL, email)
-            putExtra(Intent.EXTRA_SUBJECT, subject)
-            putExtra(Intent.EXTRA_TEXT, text)
-        }
-        return Intent.createChooser(contactSupportIntent, null)
+    override fun buttonToContactSupport(): List<Int> {
+        return listOf(R.string.support_email_address,
+            R.string.support_email_subject,
+            R.string.support_email_body)
     }
 
-    override fun buttonToUserAgreement(url: String): Intent {
-        val webpage: Uri = url.toUri()
-        val intent = Intent(Intent.ACTION_VIEW, webpage)
-        return Intent.createChooser(intent, null)
+
+
+    override fun buttonToUserAgreement(): Int {
+        return R.string.user_agreement_url
     }
 }

@@ -2,14 +2,15 @@ package com.saturnnetwork.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.saturnnetwork.playlistmaker.main.data.ThemeRepository
 
 class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val sharedPrefs = getSharedPreferences("settings_activity_preferences", MODE_PRIVATE)
-        val themeSwitcherPosition: Boolean = sharedPrefs.getBoolean("themeSwitcherPosition", false)
-        switchTheme(themeSwitcherPosition)
+        val themeRepository = ThemeRepository(this)
+        val darkTheme = themeRepository.isDarkThemeEnabled()
+        switchTheme(darkTheme)
 
     }
 

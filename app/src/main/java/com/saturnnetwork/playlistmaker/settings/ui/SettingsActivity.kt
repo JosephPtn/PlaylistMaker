@@ -14,7 +14,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
     private val viewModel: SettingViewModel by viewModels {
         SettingViewModelFactory(
-            sharedPreferences = getSharedPreferences("settings_activity_preferences", MODE_PRIVATE)
+            sharedPreferences = getSharedPreferences("settings_activity_preferences", MODE_PRIVATE), this
         )
     }
 
@@ -29,15 +29,13 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.shareApp.setOnClickListener {
-            viewModel.onShareButtonClicked(getString(R.string.android_course_url))
+            viewModel.onShareButtonClicked()
         }
         binding.contactSupport.setOnClickListener {
-            viewModel.onContactSupportButtonClicked(getString(R.string.support_email_address),
-                getString(R.string.support_email_subject),
-                getString(R.string.support_email_body))
+            viewModel.onContactSupportButtonClicked()
         }
         binding.userAgreement.setOnClickListener {
-            viewModel.onButtonToUserAgreement("https://yandex.ru/legal/practicum_offer/")
+            viewModel.onButtonToUserAgreement()
         }
         viewModel.observeIntentLiveData().observe(this) { intent ->
             startActivity(intent)

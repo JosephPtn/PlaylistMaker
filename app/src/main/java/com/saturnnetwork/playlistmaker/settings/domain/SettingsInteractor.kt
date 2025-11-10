@@ -5,7 +5,7 @@ import android.content.Intent
 interface SettingsInteractor {
     fun isDarkModeEnabled(): Boolean
     fun setDarkMode(enabled: Boolean)
-    fun buttonToShareApp(value: String): Intent
-    fun buttonToContactSupport(email: String, subject: String, text: String): Intent
-    fun buttonToUserAgreement(url: String): Intent
+    fun buttonToShareApp(): Int
+    fun buttonToContactSupport(): List<Int>
+    fun buttonToUserAgreement(): Int
 }

@@ -9,21 +9,6 @@ import java.util.concurrent.Executors
 
 class TracksInteractorImpl (private val repository: TracksRepository): TracksInteractor {
     private val executor = Executors.newCachedThreadPool()
-    /*override fun searchTracks(
-        expression: String,
-        consumer: TracksInteractor.TracksConsumer
-    ) {
-        executor.execute {
-            try {
-                val result = repository.searchTracks(expression)
-                // Передаём даже пустой список в consume
-                consumer.consume(result)
-            } catch (e: Exception) {
-                // Любая реальная ошибка сети
-                consumer.onError()
-            }
-        }
-    }*/
 
     override fun searchTracks(expression: String, consumer: TracksInteractor.TracksConsumer) {
         executor.execute {

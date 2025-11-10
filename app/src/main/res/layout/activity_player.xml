@@ -10,6 +10,7 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/playbackControlColor2"
         tools:context=".player.ui.PlayerActivity">
 
         <Button
@@ -47,13 +48,13 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
+            android:ellipsize="end"
             android:fontFamily="@font/ys_display_medium"
+            android:maxLines="1"
+            android:singleLine="true"
             android:text="TextView"
             android:textColor="@color/text_value"
             android:textSize="22sp"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:maxLines="1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/albumArtView" />
@@ -94,11 +95,11 @@
             android:layout_marginTop="38dp"
             android:background="@drawable/round_button"
             android:backgroundTint="@color/playbackControlColor2"
-            android:tint="@color/playbackControlColor1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/artistNamePlayerActivity"
-            app:srcCompat="@drawable/play_button" />
+            app:srcCompat="@drawable/play_button"
+            app:tint="@color/playbackControlColor1" />
 
         <ImageButton
             android:id="@+id/addToFavoritesButton"
