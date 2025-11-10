@@ -1,7 +1,5 @@
-package com.saturnnetwork.playlistmaker
+package com.saturnnetwork.playlistmaker.ui.search
 
-import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.Bundle
@@ -9,9 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.VelocityTracker
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -19,7 +15,6 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -28,15 +23,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.saturnnetwork.playlistmaker.data_class.SearchResponse
-import com.saturnnetwork.playlistmaker.interface_.ItunesApiService
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Query
+import com.saturnnetwork.playlistmaker.R
+import com.saturnnetwork.playlistmaker.di.TracksInteractorCreator
+import com.saturnnetwork.playlistmaker.domain.TracksInteractor
+import com.saturnnetwork.playlistmaker.domain.models.Track
+
 
 class SearchActivity : AppCompatActivity() {
 
@@ -53,7 +44,7 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var searchProgressBar: ProgressBar
 
-    private val tracks: ArrayList<Track> = ArrayList()
+    private var tracks: ArrayList<Track> = ArrayList()
 
     private lateinit var sharedPrefs: SharedPreferences
 
@@ -72,18 +63,16 @@ class SearchActivity : AppCompatActivity() {
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         when (key) {
             "prefsHistory" -> {
-                val searchHistory: SearchHistory = SearchHistory(sharedPrefs)
-                tracksHistory = searchHistory.read()
+                val interactor = TracksInteractorCreator.create(sharedPrefs)
+                tracksHistory = interactor.loadFromHistory()
+                Handler(Looper.getMainLooper()).post {
+                    adapterSearchHistory.notifyDataSetChanged()
+                }
+
             }
         }
     }
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("https://itunes.apple.com")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val itunesService = retrofit.create(ItunesApiService::class.java)
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -96,8 +85,10 @@ class SearchActivity : AppCompatActivity() {
 
         sharedPrefs = getSharedPreferences("sharedPrefs", MODE_PRIVATE)
         sharedPrefs.registerOnSharedPreferenceChangeListener(prefsListener)
-        val searchHistory: SearchHistory = SearchHistory(sharedPrefs)
-        tracksHistory = searchHistory.read()
+        val interactor = TracksInteractorCreator.create(sharedPrefs)
+        adapterSearchHistory = TrackAdapter(tracksHistory, interactor)
+
+        tracksHistory = interactor.loadFromHistory()
 
         imgError = findViewById(R.id.imgError)
         imgError.visibility = View.INVISIBLE
@@ -174,7 +165,7 @@ class SearchActivity : AppCompatActivity() {
                         recyclerView.isNestedScrollingEnabled = true
 
 
-                        adapterSearchHistory = TrackAdapter(tracksHistory)
+                        adapterSearchHistory = TrackAdapter(tracksHistory, interactor)
                         recyclerView.adapter = adapterSearchHistory
 
                         // Проверка, вышел ли RecyclerView за границу
@@ -311,12 +302,13 @@ class SearchActivity : AppCompatActivity() {
 
             updateUIComposition("search_result")
 
-            val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchInput.windowToken, 0)
             searchInput.clearFocus()
 
             imgError.visibility = View.INVISIBLE
             textError.visibility = View.INVISIBLE
+            retryButton.visibility = View.INVISIBLE
 
             tracks.clear()
             adapter.notifyDataSetChanged()
@@ -330,12 +322,12 @@ class SearchActivity : AppCompatActivity() {
 
 
         clear_history_button.setOnClickListener {
-            searchHistory.clear()
+            interactor.clearHistory()
             tracksHistory.clear()
             adapterSearchHistory.notifyDataSetChanged()
             updateUIComposition("search_result")
-
         }
+
 
         fun onApiError() {
             searchProgressBar.visibility = View.INVISIBLE
@@ -345,46 +337,40 @@ class SearchActivity : AppCompatActivity() {
             imgError.setImageResource(R.drawable.ic_connection_issues)
             imgError.visibility = View.VISIBLE
             retryButton.visibility = View.VISIBLE
-            recyclerView.adapter = TrackAdapter(tracks)
+            recyclerView.adapter = TrackAdapter(tracks, interactor)
         }
 
         fun startApiSearch() {
             if (globalSearchText.isNotBlank()) {
+                // Вызываем поиск песен
                 searchProgressBar.visibility = View.VISIBLE
-                itunesService.search(searchInput.text.toString()).enqueue(object :
-                    Callback<SearchResponse> {
-                    override fun onResponse(
-                        call: Call<SearchResponse>,
-                        response: Response<SearchResponse>
-                    ) {
-                        if (response.code() == 200) {
-                            tracks.clear()
-                            retryButton.visibility = View.INVISIBLE
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                tracks.addAll(response.body()?.results!!)
+                interactor.searchTracks(
+                    searchInput.text.toString(),
+                    object : TracksInteractor.TracksConsumer {
+                        override fun consume(foundTracks: ArrayList<Track>) {
+                            runOnUiThread {
+                                if (foundTracks.isNotEmpty()) {
+                                    imgError.visibility = View.INVISIBLE
+                                    textError.visibility = View.INVISIBLE
+                                    tracks.clear()
+                                    tracks.addAll(foundTracks)
+                                } else {
+                                    imgError.setImageResource(R.drawable.ic_no_results)
+                                    imgError.visibility = View.VISIBLE
+                                    textError.text = getString(R.string.nothing_was_found)
+                                    textError.visibility = View.VISIBLE
+                                    tracks.clear()
+                                }
+                                searchProgressBar.visibility = View.INVISIBLE
+                                adapter.notifyDataSetChanged()
                             }
-                            if (tracks.isEmpty()) {
-                                imgError.setImageResource(R.drawable.ic_no_results)
-                                imgError.visibility = View.VISIBLE
-                                textError.text = getString(R.string.nothing_was_found)
-                                textError.visibility = View.VISIBLE
-                                tracks.clear()
-                            } else {
-                                imgError.visibility = View.INVISIBLE
-                                textError.visibility = View.INVISIBLE
-                            }
-                            searchProgressBar.visibility = View.INVISIBLE
-                            adapter.notifyDataSetChanged()
-                        } else {
-                            onApiError()
                         }
-                    }
-
-                    override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
-                        onApiError()
-                    }
-
-                })
+                        override fun onError() {
+                            runOnUiThread {
+                                onApiError()
+                            }
+                        }
+                    })
             }
         }
 
@@ -435,7 +421,7 @@ class SearchActivity : AppCompatActivity() {
             startApiSearch()
         }
 
-        adapter = TrackAdapter(tracks)
+        adapter = TrackAdapter(tracks, interactor)
 
         searchInput.requestFocus()
 
@@ -458,4 +444,5 @@ class SearchActivity : AppCompatActivity() {
         sharedPrefs.unregisterOnSharedPreferenceChangeListener(prefsListener)
         handler.removeCallbacksAndMessages(null)
     }
+
 }
