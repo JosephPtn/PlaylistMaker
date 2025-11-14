@@ -15,7 +15,7 @@ val interactorModule = module {
     }
 
     // используется: SettingViewModel
-    single<SettingsInteractor> {
+    factory<SettingsInteractor> {
         SettingsInteractorImpl(get())
     }
 

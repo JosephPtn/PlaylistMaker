@@ -86,6 +86,7 @@ class PlayerActivity : AppCompatActivity() {
 
 
         private fun renderState(state: PlayerScreenState) {
+            println(state.playerState)
             when (state.playerState) {
                 PlayerState.PREPARED -> {
                     setTrackData(state.track)
@@ -123,6 +124,7 @@ class PlayerActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra("track") as? Track
         }
+
         // Устанавливаем трек только если ViewModel ещё пустая
         if (track != null && viewModel.track.value == null) {
             viewModel.setTrack(track)

@@ -44,6 +44,12 @@ class SearchViewModel(private val interactor: TracksInteractor): ViewModel() {
 
     fun searchTracks(searchInput: String) {
         if (searchInput.isNotEmpty()) {
+            searchStateLiveData.postValue(SearchState(
+                tracks = arrayListOf<Track>(),
+                isLoading = true,
+                errorMessageRes = null,
+                composition = "search_result")
+            )
             interactor.searchTracks(expression = searchInput,
                 consumer = object : TracksInteractor.TracksConsumer {
                     override fun consume(foundTracks: ArrayList<Track>) {

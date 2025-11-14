@@ -1,6 +1,5 @@
 package com.saturnnetwork.playlistmaker.player.ui
 
-import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
@@ -21,15 +20,17 @@ class PlayerViewModel(
         private const val UPDATE_INTERVAL_MS = 300L
     }
 
+
     private var playerScreenStateLiveData = MutableLiveData<PlayerScreenState>()
     fun observeScreenStateLiveData(): LiveData<PlayerScreenState> = playerScreenStateLiveData
     private val handler = Handler(Looper.getMainLooper())
 
     val track = MutableLiveData<Track>()
+
+
     fun setTrack(_track: Track) {
         track.value = _track
         preparePlayer(_track.previewUrl)
-        println(_track)
     }
 
     fun preparePlayer(url: String) {
@@ -102,7 +103,5 @@ class PlayerViewModel(
         playerInteractor.release()
         handler.removeCallbacksAndMessages(null)
     }
-
-
 
 }

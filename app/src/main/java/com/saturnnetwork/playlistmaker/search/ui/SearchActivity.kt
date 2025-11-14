@@ -40,11 +40,7 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
 
     private lateinit var binding: ActivitySearchBinding
-    /*private val viewModel: SearchViewModel by viewModels {
-        SearchViewModelFactory(
-            sharedPreferences = getSharedPreferences("sharedPrefs", MODE_PRIVATE)
-        )
-    }*/
+
     private val viewModel: SearchViewModel by viewModel()
 
     private fun showLoading() {

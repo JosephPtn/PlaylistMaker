@@ -7,13 +7,15 @@ class PlayerRepositoryImpl(private var mediaPlayer: MediaPlayer?) : PlayerReposi
 
 
     override fun prepare(url: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(url)
-            prepareAsync()
+        mediaPlayer?.reset()
+        mediaPlayer?.apply {
             setOnPreparedListener { onPrepared() }
             setOnCompletionListener { onCompletion() }
+            setDataSource(url)
+            prepareAsync()
         }
     }
+
 
     override fun play() {
         mediaPlayer?.start()
@@ -25,7 +27,7 @@ class PlayerRepositoryImpl(private var mediaPlayer: MediaPlayer?) : PlayerReposi
 
     override fun release() {
         mediaPlayer?.release()
-        mediaPlayer = null
+        //mediaPlayer = null
     }
 
     override fun isPlaying(): Boolean {

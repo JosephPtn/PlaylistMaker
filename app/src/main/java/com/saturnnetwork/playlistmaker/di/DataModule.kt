@@ -43,7 +43,7 @@ val dataModule = module {
         ResourceProviderImpl(androidContext())
     }
 
-    single { ThemeRepository(androidContext()) }
+    factory { ThemeRepository(androidContext()) }
 
     factory { MediaPlayer() }
 
