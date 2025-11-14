@@ -1,8 +1,8 @@
 package com.saturnnetwork.playlistmaker.di
 
-import com.saturnnetwork.playlistmaker.domain.player.PlayerInteractor
-import com.saturnnetwork.playlistmaker.domain.player.PlayerInteractorImpl
-import com.saturnnetwork.playlistmaker.data.player.PlayerRepositoryImpl
+import com.saturnnetwork.playlistmaker.player.domain.PlayerInteractor
+import com.saturnnetwork.playlistmaker.player.domain.PlayerInteractorImpl
+import com.saturnnetwork.playlistmaker.player.data.PlayerRepositoryImpl
 
 object PlayerInteractorCreator {
     fun create(): PlayerInteractor {
