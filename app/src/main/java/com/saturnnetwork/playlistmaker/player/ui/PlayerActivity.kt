@@ -86,7 +86,6 @@ class PlayerActivity : AppCompatActivity() {
 
 
         private fun renderState(state: PlayerScreenState) {
-            println(state.playerState)
             when (state.playerState) {
                 PlayerState.PREPARED -> {
                     setTrackData(state.track)
@@ -117,6 +116,7 @@ class PlayerActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
 
         val track: Track? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("track", Track::class.java)
