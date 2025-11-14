@@ -8,7 +8,6 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -45,6 +44,10 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showLoading() {
         binding.searchProgressBar.show()
+        listOf(binding.textError,
+            binding.imgError,
+            binding.tracksRecyclerView,
+            binding.clearHistoryButton).hide()
 
     }
 
@@ -59,7 +62,7 @@ class SearchActivity : AppCompatActivity() {
     fun updateUIComposition(composition: String, tracks: ArrayList<Track>, error: String?) {
         when (composition) {
             "history" -> {
-                listOf(binding.textError, binding.imgError).hide()
+                listOf(binding.searchProgressBar,binding.textError, binding.imgError).hide()
                 listOf(binding.youSearched, binding.tracksRecyclerView, binding.clearHistoryButton).show()
                 val constraintSet = ConstraintSet()
                 val constraintLayout = findViewById<ConstraintLayout>(R.id.activity_search)
