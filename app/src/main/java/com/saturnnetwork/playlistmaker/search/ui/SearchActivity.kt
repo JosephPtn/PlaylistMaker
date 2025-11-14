@@ -17,11 +17,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saturnnetwork.playlistmaker.R
-import com.saturnnetwork.playlistmaker.creator.SearchViewModelFactory
 import com.saturnnetwork.playlistmaker.databinding.ActivitySearchBinding
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import com.saturnnetwork.playlistmaker.utils.hide
 import com.saturnnetwork.playlistmaker.utils.show
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
 class SearchActivity : AppCompatActivity() {
@@ -40,11 +40,12 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
 
     private lateinit var binding: ActivitySearchBinding
-    private val viewModel: SearchViewModel by viewModels {
+    /*private val viewModel: SearchViewModel by viewModels {
         SearchViewModelFactory(
             sharedPreferences = getSharedPreferences("sharedPrefs", MODE_PRIVATE)
         )
-    }
+    }*/
+    private val viewModel: SearchViewModel by viewModel()
 
     private fun showLoading() {
         binding.searchProgressBar.show()

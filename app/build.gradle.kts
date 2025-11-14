@@ -57,5 +57,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation("io.insert-koin:koin-android:4.1.1")
 
 }
