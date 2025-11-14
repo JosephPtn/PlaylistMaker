@@ -164,6 +164,7 @@ class SearchActivity : AppCompatActivity() {
                     }
                 }
             }
+
             "search_result" -> {
                 listOf(binding.searchProgressBar, binding.textError, binding.retryButton,
                     binding.imgError).hide()
