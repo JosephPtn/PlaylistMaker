@@ -97,7 +97,6 @@ class SearchActivity : AppCompatActivity() {
 
                 constraintSet.applyTo(constraintLayout)
 
-
                 val params = binding.tracksRecyclerView.layoutParams as ConstraintLayout.LayoutParams
                 params.height = ConstraintLayout.LayoutParams.WRAP_CONTENT
                 binding.tracksRecyclerView.layoutParams = params
