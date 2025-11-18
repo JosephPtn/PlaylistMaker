@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.saturnnetwork.playlistmaker.R
 import com.saturnnetwork.playlistmaker.databinding.ActivitySearchBinding
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
+import com.saturnnetwork.playlistmaker.utils.gone
 import com.saturnnetwork.playlistmaker.utils.hide
 import com.saturnnetwork.playlistmaker.utils.show
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -44,10 +45,11 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showLoading() {
         binding.searchProgressBar.show()
-        listOf(binding.textError,
+        listOf(binding.youSearched,
+            binding.textError,
             binding.imgError,
             binding.tracksRecyclerView,
-            binding.clearHistoryButton).hide()
+            binding.clearHistoryButton).gone()
 
     }
 
@@ -62,7 +64,7 @@ class SearchActivity : AppCompatActivity() {
     fun updateUIComposition(composition: String, tracks: ArrayList<Track>, error: String?) {
         when (composition) {
             "history" -> {
-                listOf(binding.searchProgressBar,binding.textError, binding.imgError).hide()
+                listOf(binding.searchProgressBar,binding.textError, binding.imgError).gone()
                 listOf(binding.youSearched, binding.tracksRecyclerView, binding.clearHistoryButton).show()
                 val constraintSet = ConstraintSet()
                 val constraintLayout = findViewById<ConstraintLayout>(R.id.activity_search)
@@ -167,7 +169,7 @@ class SearchActivity : AppCompatActivity() {
 
             "search_result" -> {
                 listOf(binding.searchProgressBar, binding.textError, binding.retryButton,
-                    binding.imgError).hide()
+                    binding.imgError).gone()
                 binding.tracksRecyclerView.show()
 
                 val constraintSet = ConstraintSet()
@@ -217,7 +219,7 @@ class SearchActivity : AppCompatActivity() {
 
             }
             "error" -> {
-                listOf(binding.searchProgressBar, binding.clearHistoryButton, binding.youSearched).hide()
+                listOf(binding.searchProgressBar, binding.clearHistoryButton, binding.youSearched).gone()
                 listOf(binding.textError, binding.imgError).show()
                 adapter = TrackAdapter(tracks, viewModel.getInteractor())
                 binding.tracksRecyclerView.adapter = adapter
