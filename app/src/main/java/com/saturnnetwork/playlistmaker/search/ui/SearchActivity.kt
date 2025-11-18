@@ -49,7 +49,8 @@ class SearchActivity : AppCompatActivity() {
             binding.textError,
             binding.imgError,
             binding.tracksRecyclerView,
-            binding.clearHistoryButton).gone()
+            binding.clearHistoryButton,
+            binding.retryButton).gone()
 
     }
 
