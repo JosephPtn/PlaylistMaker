@@ -50,7 +50,7 @@ class SearchActivity : AppCompatActivity() {
             binding.imgError,
             binding.tracksRecyclerView,
             binding.clearHistoryButton,
-            binding.retryButton).gone()
+            binding.retryButton).hide()
     }
 
     private fun showError(state: SearchState, error: String) {
@@ -64,7 +64,7 @@ class SearchActivity : AppCompatActivity() {
     fun updateUIComposition(composition: String, tracks: ArrayList<Track>, error: String?) {
         when (composition) {
             "history" -> {
-                listOf(binding.searchProgressBar,binding.textError, binding.imgError).gone()
+                listOf(binding.searchProgressBar,binding.textError, binding.imgError).hide()
                 listOf(binding.youSearched, binding.tracksRecyclerView, binding.clearHistoryButton).show()
                 val constraintSet = ConstraintSet()
                 val constraintLayout = findViewById<ConstraintLayout>(R.id.activity_search)
@@ -169,7 +169,7 @@ class SearchActivity : AppCompatActivity() {
 
             "search_result" -> {
                 listOf(binding.searchProgressBar, binding.textError, binding.retryButton,
-                    binding.imgError).gone()
+                    binding.imgError).hide()
                 binding.tracksRecyclerView.show()
 
                 val constraintSet = ConstraintSet()
@@ -219,7 +219,7 @@ class SearchActivity : AppCompatActivity() {
 
             }
             "error" -> {
-                listOf(binding.searchProgressBar, binding.clearHistoryButton, binding.youSearched).gone()
+                listOf(binding.searchProgressBar, binding.clearHistoryButton, binding.youSearched).hide()
                 listOf(binding.textError, binding.imgError).show()
                 adapter = TrackAdapter(tracks, viewModel.getInteractor())
                 binding.tracksRecyclerView.adapter = adapter
