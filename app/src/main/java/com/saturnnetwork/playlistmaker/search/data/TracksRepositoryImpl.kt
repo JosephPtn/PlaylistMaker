@@ -26,10 +26,11 @@ import com.saturnnetwork.playlistmaker.search.data.dto.TrackDTO
 import kotlin.collections.removeAll
 
 class TracksRepositoryImpl (private val networkClient: NetworkClient,
-                            private val sharedPrefs: SharedPreferences
+                            private val sharedPrefs: SharedPreferences,
+                            private val gson: Gson
 ): TracksRepository {
 
-    private val gson = Gson()
+    // тут указываем ключ из файла (/data/data/<your.package.name>/shared_prefs/SharedPrefs.xml)
     private val key = "prefsHistory"
 
 

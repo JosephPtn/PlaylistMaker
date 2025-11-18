@@ -3,18 +3,19 @@ package com.saturnnetwork.playlistmaker.player.data
 import android.media.MediaPlayer
 import com.saturnnetwork.playlistmaker.player.domain.PlayerRepository
 
-class PlayerRepositoryImpl : PlayerRepository {
+class PlayerRepositoryImpl(private var mediaPlayer: MediaPlayer?) : PlayerRepository {
 
-    private var mediaPlayer: MediaPlayer? = null
 
     override fun prepare(url: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(url)
-            prepareAsync()
+        mediaPlayer?.reset()
+        mediaPlayer?.apply {
             setOnPreparedListener { onPrepared() }
             setOnCompletionListener { onCompletion() }
+            setDataSource(url)
+            prepareAsync()
         }
     }
+
 
     override fun play() {
         mediaPlayer?.start()
@@ -26,7 +27,7 @@ class PlayerRepositoryImpl : PlayerRepository {
 
     override fun release() {
         mediaPlayer?.release()
-        mediaPlayer = null
+        //mediaPlayer = null
     }
 
     override fun isPlaying(): Boolean {

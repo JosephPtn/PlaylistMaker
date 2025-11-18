@@ -1,6 +1,5 @@
 package com.saturnnetwork.playlistmaker.settings.domain
 
-import android.content.Intent
 
 class SettingsInteractorImpl(
     private val repository: SettingsRepository
