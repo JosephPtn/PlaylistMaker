@@ -51,7 +51,6 @@ class SearchActivity : AppCompatActivity() {
             binding.tracksRecyclerView,
             binding.clearHistoryButton,
             binding.retryButton).gone()
-
     }
 
     private fun showError(state: SearchState, error: String) {
