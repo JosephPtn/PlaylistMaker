@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.saturnnetwork.playlistmaker.R
 import com.saturnnetwork.playlistmaker.databinding.ActivitySearchBinding
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
-import com.saturnnetwork.playlistmaker.utils.gone
 import com.saturnnetwork.playlistmaker.utils.hide
 import com.saturnnetwork.playlistmaker.utils.show
 import org.koin.androidx.viewmodel.ext.android.viewModel
