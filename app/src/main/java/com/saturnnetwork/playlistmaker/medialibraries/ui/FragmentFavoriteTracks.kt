@@ -9,6 +9,13 @@ import com.saturnnetwork.playlistmaker.databinding.FragmentFavoriteTracksBinding
 
 class FragmentFavoriteTracks: Fragment() {
 
+    companion object {
+
+        fun newInstance() = FragmentFavoriteTracks().apply {
+
+        }
+    }
+
     private lateinit var binding: FragmentFavoriteTracksBinding
 
     override fun onCreateView(

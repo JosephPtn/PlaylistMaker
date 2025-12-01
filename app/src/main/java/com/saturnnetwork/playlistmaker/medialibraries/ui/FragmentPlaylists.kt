@@ -8,6 +8,14 @@ import androidx.fragment.app.Fragment
 import com.saturnnetwork.playlistmaker.databinding.FragmentPlaylistsBinding
 
 class FragmentPlaylists: Fragment() {
+
+    companion object {
+
+        fun newInstance() = FragmentPlaylists().apply {
+
+        }
+    }
+
     private lateinit var binding: FragmentPlaylistsBinding
 
     override fun onCreateView(
