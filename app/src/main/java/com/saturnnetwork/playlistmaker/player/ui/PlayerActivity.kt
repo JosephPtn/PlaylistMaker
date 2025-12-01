@@ -4,30 +4,25 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.saturnnetwork.playlistmaker.R
-import com.saturnnetwork.playlistmaker.creator.PlayerViewModelFactory
 import com.saturnnetwork.playlistmaker.databinding.ActivityPlayerBinding
 import com.saturnnetwork.playlistmaker.player.domain.PlayerState
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import com.saturnnetwork.playlistmaker.utils.gone
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.time.ZonedDateTime
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
 
-
-
     private lateinit var binding: ActivityPlayerBinding
-    private val viewModel: PlayerViewModel by viewModels {
-        PlayerViewModelFactory()
-    }
+    private val viewModel: PlayerViewModel by viewModel()
 
     fun pxToDp(px: Float, context: Context): Float {
         return px / context.resources.displayMetrics.density
@@ -122,12 +117,14 @@ class PlayerActivity : AppCompatActivity() {
             insets
         }
 
+
         val track: Track? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("track", Track::class.java)
         } else {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra("track") as? Track
         }
+
         // Устанавливаем трек только если ViewModel ещё пустая
         if (track != null && viewModel.track.value == null) {
             viewModel.setTrack(track)

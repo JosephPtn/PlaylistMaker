@@ -8,16 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 
-class RetrofitNetworkClient () : NetworkClient {
-
-    private val baseUrl = "https://itunes.apple.com"
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val itunesService = retrofit.create(ItunesApiService::class.java)
+class RetrofitNetworkClient (private val itunesService: ItunesApiService) : NetworkClient {
 
     /*
        Проверка: если это SearchRequest, извлекаем expression (например, "Beatles").

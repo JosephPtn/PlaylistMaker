@@ -8,7 +8,6 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -17,11 +16,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saturnnetwork.playlistmaker.R
-import com.saturnnetwork.playlistmaker.creator.SearchViewModelFactory
 import com.saturnnetwork.playlistmaker.databinding.ActivitySearchBinding
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
+import com.saturnnetwork.playlistmaker.utils.gone
 import com.saturnnetwork.playlistmaker.utils.hide
 import com.saturnnetwork.playlistmaker.utils.show
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
 class SearchActivity : AppCompatActivity() {
@@ -40,15 +40,17 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
 
     private lateinit var binding: ActivitySearchBinding
-    private val viewModel: SearchViewModel by viewModels {
-        SearchViewModelFactory(
-            sharedPreferences = getSharedPreferences("sharedPrefs", MODE_PRIVATE)
-        )
-    }
+
+    private val viewModel: SearchViewModel by viewModel()
 
     private fun showLoading() {
         binding.searchProgressBar.show()
-
+        listOf(binding.youSearched,
+            binding.textError,
+            binding.imgError,
+            binding.tracksRecyclerView,
+            binding.clearHistoryButton,
+            binding.retryButton).hide()
     }
 
     private fun showError(state: SearchState, error: String) {
@@ -62,7 +64,7 @@ class SearchActivity : AppCompatActivity() {
     fun updateUIComposition(composition: String, tracks: ArrayList<Track>, error: String?) {
         when (composition) {
             "history" -> {
-                listOf(binding.textError, binding.imgError).hide()
+                listOf(binding.searchProgressBar,binding.textError, binding.imgError).hide()
                 listOf(binding.youSearched, binding.tracksRecyclerView, binding.clearHistoryButton).show()
                 val constraintSet = ConstraintSet()
                 val constraintLayout = findViewById<ConstraintLayout>(R.id.activity_search)
@@ -164,6 +166,7 @@ class SearchActivity : AppCompatActivity() {
                     }
                 }
             }
+
             "search_result" -> {
                 listOf(binding.searchProgressBar, binding.textError, binding.retryButton,
                     binding.imgError).hide()
