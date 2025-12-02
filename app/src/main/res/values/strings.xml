@@ -25,4 +25,13 @@
     <string name="genre">genre</string>
     <string name="country">Country</string>
 
+    <!-- activity_MediaLibraries-->
+    <string name="favorite_tracks">Favorite tracks</string>
+    <string name="playlists">Playlists</string>
+    <string name="library_is_empty">Your media library is empty</string>
+    <string name="new_playlist">New playlisty</string>
+    <string name="you_havent_playlist">You havent created any playlists</string>
+
+
+
 </resources>

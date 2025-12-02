@@ -25,4 +25,12 @@
     <string name="year">Год</string>
     <string name="genre">Жанр</string>
     <string name="country">Страна</string>
+
+    <!-- activity_MediaLibraries-->
+    <string name="favorite_tracks">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="library_is_empty">Ваша медиатека пуста</string>
+    <string name="new_playlist">Новый плейлист</string>
+    <string name="you_havent_playlist">Вы не создали\nни одного плейлиста</string>
+
 </resources>

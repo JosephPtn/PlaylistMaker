@@ -7,7 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.saturnnetwork.playlistmaker.databinding.ActivityMainBinding
 import com.saturnnetwork.playlistmaker.settings.ui.SettingsActivity
-import com.saturnnetwork.playlistmaker.medialibraries.MediaLibrariesActivity
+import com.saturnnetwork.playlistmaker.medialibraries.ui.MediaLibrariesActivity
 import com.saturnnetwork.playlistmaker.search.ui.SearchActivity
 import kotlin.getValue
 
