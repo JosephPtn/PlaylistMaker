@@ -1,42 +1,51 @@
 package com.saturnnetwork.playlistmaker.main.ui
 
-
-import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
+import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.saturnnetwork.playlistmaker.R
 import com.saturnnetwork.playlistmaker.databinding.ActivityMainBinding
-import com.saturnnetwork.playlistmaker.settings.ui.SettingsActivity
-import com.saturnnetwork.playlistmaker.medialibraries.ui.MediaLibrariesActivity
-import com.saturnnetwork.playlistmaker.search.ui.SearchActivity
-import kotlin.getValue
-
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: MainViewModel by viewModels()
+
+    private fun bottomNavigationViewVisibility(state: Boolean) {
+        if (state) {
+            binding.bottomNavigationView.visibility = View.VISIBLE
+        } else {
+            binding.bottomNavigationView.visibility = View.GONE
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.findBtn.setOnClickListener {
-            viewModel.setIntent("search")
+        ViewCompat.setOnApplyWindowInsetsListener(binding.fragmentContainerView) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(0, systemBars.top, 0, 0)
+            insets
         }
-        binding.mediaLibrBtn.setOnClickListener {
-            viewModel.setIntent("media_library")
-        }
-        binding.settingsBtn.setOnClickListener {
-            viewModel.setIntent("setting")
-        }
+        WindowCompat.getInsetsController(window, window.decorView)
+            .isAppearanceLightStatusBars = false
 
-        viewModel.observeNavigationLiveData().observe(this) { destination ->
-            when (destination) {
-                "search" -> startActivity(Intent(this, SearchActivity::class.java))
-                "media_library" -> startActivity(Intent(this, MediaLibrariesActivity::class.java))
-                else -> startActivity(Intent(this, SettingsActivity::class.java))
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
+        val navController = navHostFragment.navController
+        binding.bottomNavigationView.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.playerFragment -> bottomNavigationViewVisibility(false)
+                else -> bottomNavigationViewVisibility(true)
             }
         }
 

@@ -14,20 +14,6 @@
         android:layout_height="56dp"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/backBtn"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="4dp"
-            android:backgroundTint="@android:color/transparent"
-            app:cornerRadius="16dp"
-            app:icon="@drawable/ic_back_arrow_24"
-            app:iconGravity="textStart"
-            app:iconPadding="5dp"
-            app:iconTint="@color/text_color" />
-
         <TextView
             android:id="@+id/title"
             android:layout_width="0dp"

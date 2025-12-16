@@ -3,8 +3,9 @@ package com.saturnnetwork.playlistmaker.search.domain.models
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 
-@Parcelize
+@kotlinx.serialization.Serializable
 data class Track (
     var trackName: String,
     var artistName: String,
@@ -16,4 +17,4 @@ data class Track (
     var primaryGenreName: String,
     var country: String,
     var previewUrl: String,
-) : Parcelable
+) : Serializable

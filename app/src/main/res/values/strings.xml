@@ -18,7 +18,7 @@
     <string name="you_searched">You searched</string>
     <string name="clear_history">Clear history</string>
 
-    <!-- activity_player-->
+    <!-- player_fragment-->
     <string name="duration">Duration</string>
     <string name="album">Album</string>
     <string name="year">Year</string>
@@ -31,7 +31,6 @@
     <string name="library_is_empty">Your media library is empty</string>
     <string name="new_playlist">New playlisty</string>
     <string name="you_havent_playlist">You havent created any playlists</string>
-
 
 
 </resources>

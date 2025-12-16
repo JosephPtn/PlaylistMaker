@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Выбранный пункт -->
+    <item
+        android:color="@color/bottom_nav_view_text_check"
+        android:state_checked="true" />
+
+    <!-- Невыбранный пункт -->
+    <item
+        android:color="@color/bottom_nav_view_text_uncheck"
+        android:state_checked="false" />
+
+</selector>

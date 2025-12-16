@@ -40,7 +40,7 @@
         <item name="android:maxLines">1</item>
     </style>
 
-    <!-- activity_player-->
+    <!-- player_fragment-->
     <style name="activity_player_table_text">
         <item name="android:textColor">@color/text_table</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
@@ -64,6 +64,14 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="textAllCaps">false</item>
     </style>
+
+    <style name="BottomNavTextStyle">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.4</item>
+        <item name="android:lineHeight">16sp</item>
+    </style>
+
 
 
 </resources>

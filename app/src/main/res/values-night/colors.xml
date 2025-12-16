@@ -21,7 +21,7 @@
     <color name="switch_thumb_tint">#3772E7</color>
     <color name="switch_track_tint">#9FBBF3</color>
 
-    <!-- activity_player-->
+    <!-- player_fragment-->
     <color name="text_table">#AEAFB4</color>
     <color name="text_value">#FFFFFF</color>
     <color name="btn_addToPlaylist_addToFavoritesButton">#535459</color>
@@ -36,6 +36,11 @@
     <color name="text_color">#FFFFFF</color>
     <color name="btn_text_color">#1A1B22</color>
     <color name="btn_background">#FFFFFF</color>
+
+    <color name="bottom_nav_view_text_check">#3772E7</color>
+    <color name="bottom_nav_view_text_uncheck">#FFFFFF</color>
+    <color name="bottom_nav_background">#1A1B22</color>
+
 
 
 </resources>
