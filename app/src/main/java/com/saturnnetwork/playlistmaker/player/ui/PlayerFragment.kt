@@ -1,16 +1,16 @@
 package com.saturnnetwork.playlistmaker.player.ui
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.saturnnetwork.playlistmaker.R
-import com.saturnnetwork.playlistmaker.databinding.ActivityPlayerBinding
+import com.saturnnetwork.playlistmaker.databinding.PlayerFragmentBinding
 import com.saturnnetwork.playlistmaker.player.domain.PlayerState
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import com.saturnnetwork.playlistmaker.utils.gone
@@ -19,9 +19,11 @@ import java.text.SimpleDateFormat
 import java.time.ZonedDateTime
 import java.util.Locale
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerFragment: Fragment() {
 
-    private lateinit var binding: ActivityPlayerBinding
+    private var _binding: PlayerFragmentBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: PlayerViewModel by viewModel()
 
     fun pxToDp(px: Float, context: Context): Float {
@@ -31,7 +33,7 @@ class PlayerActivity : AppCompatActivity() {
     fun getCoverArtwork(url: String) {
         Glide.with(this)
             .load(url)
-            .transform(RoundedCorners(pxToDp(8F, this).toInt()))
+            .transform(RoundedCorners(pxToDp(8F, requireContext()).toInt()))
             .placeholder(R.drawable.placeholder)
             .error(R.drawable.placeholder)
             .into(binding.albumArtView)
@@ -84,46 +86,37 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-
-        private fun renderState(state: PlayerScreenState) {
-            when (state.playerState) {
-                PlayerState.PREPARED -> {
-                    setTrackData(state.track)
-                    binding.playbackControlButton.setImageResource(R.drawable.play_button)
-                }
-                PlayerState.PLAYING -> {
-                    setTrackData(state.track)
-                    binding.playbackProgress.text = state.playbackPosition
-                    binding.playbackControlButton.setImageResource(R.drawable.pause_button)
-                }
-                PlayerState.PAUSED -> {
-                    setTrackData(state.track)
-                    binding.playbackProgress.text = state.playbackPosition
-                    binding.playbackControlButton.setImageResource(R.drawable.play_button)
-                }
+    private fun renderState(state: PlayerScreenState) {
+        when (state.playerState) {
+            PlayerState.PREPARED -> {
+                setTrackData(state.track)
+                binding.playbackControlButton.setImageResource(R.drawable.play_button)
+            }
+            PlayerState.PLAYING -> {
+                setTrackData(state.track)
+                binding.playbackProgress.text = state.playbackPosition
+                binding.playbackControlButton.setImageResource(R.drawable.pause_button)
+            }
+            PlayerState.PAUSED -> {
+                setTrackData(state.track)
+                binding.playbackProgress.text = state.playbackPosition
+                binding.playbackControlButton.setImageResource(R.drawable.play_button)
             }
         }
+    }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = PlayerFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivityPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-
-        val track: Track? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("track", Track::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra("track") as? Track
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val track = arguments?.getSerializable("track") as? Track
 
         // Устанавливаем трек только если ViewModel ещё пустая
         if (track != null && viewModel.track.value == null) {
@@ -138,9 +131,14 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         binding.btnBackFromPlayer.setOnClickListener {
-            finish()
+            findNavController().popBackStack()
         }
 
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onPause() {
@@ -149,7 +147,4 @@ class PlayerActivity : AppCompatActivity() {
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 }

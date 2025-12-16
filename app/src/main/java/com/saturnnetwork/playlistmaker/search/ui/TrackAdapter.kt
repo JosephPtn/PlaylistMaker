@@ -9,12 +9,13 @@ import com.saturnnetwork.playlistmaker.search.domain.TracksInteractor
 
 class TrackAdapter(
     private val tracks: ArrayList<Track>,
-    private val interactor: TracksInteractor
+    private val interactor: TracksInteractor,
+    private val onTrackClick: (Track) -> Unit
 ) : RecyclerView.Adapter<TrackViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.tracks_view, parent, false)
-        return TrackViewHolder(view, interactor)
+        return TrackViewHolder(view, interactor, onTrackClick)
     }
 
     override fun getItemCount(): Int {
