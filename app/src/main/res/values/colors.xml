@@ -18,7 +18,7 @@
     <color name="btn_retry_text">#FFFFFF</color>
     <color name="btn_retry_color">#1A1B22</color>
     <!-- activity_settings -->
-    <color name="switch_thumb_tint">#00D6C3</color>
+    <color name="switch_thumb_tint">#AEAFB4</color>
     <color name="switch_track_tint">#76EAE0</color>
 
     <!-- player_fragment-->
