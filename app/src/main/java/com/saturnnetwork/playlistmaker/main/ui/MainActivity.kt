@@ -25,6 +25,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        /*
+        edge-to-edge позволяет приложению рисоваться под
+        системными панелями (status bar и navigation bar).
+        Контент может доходить до самых краёв экрана, а не начинаться ниже статус-бара
+        и выше навигационной панели
+         */
         enableEdgeToEdge()
 
         binding = ActivityMainBinding.inflate(layoutInflater)

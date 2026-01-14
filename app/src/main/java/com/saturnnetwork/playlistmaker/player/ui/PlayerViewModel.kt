@@ -5,9 +5,13 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.saturnnetwork.playlistmaker.player.domain.PlayerInteractor
 import com.saturnnetwork.playlistmaker.player.domain.PlayerState
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -23,10 +27,9 @@ class PlayerViewModel(
 
     private var playerScreenStateLiveData = MutableLiveData<PlayerScreenState>()
     fun observeScreenStateLiveData(): LiveData<PlayerScreenState> = playerScreenStateLiveData
-    private val handler = Handler(Looper.getMainLooper())
 
     val track = MutableLiveData<Track>()
-
+    private var timerJob: Job? = null
 
     fun setTrack(_track: Track) {
         track.value = _track
@@ -51,7 +54,7 @@ class PlayerViewModel(
          playerScreenStateLiveData.postValue(
              PlayerScreenState(PlayerState.PLAYING, currentTrack, currentPosition)
          )
-         handler.post(updatePlaybackProgressRunnable)
+         startTimer()
 
     }
 
@@ -60,7 +63,7 @@ class PlayerViewModel(
         val currentTrack = track.value
         val currentPosition = playerScreenStateLiveData.value?.playbackPosition
         playerScreenStateLiveData.postValue(PlayerScreenState(PlayerState.PAUSED, currentTrack, currentPosition))
-        handler.removeCallbacks(updatePlaybackProgressRunnable)
+        timerJob?.cancel()
     }
 
     fun pauseOnBackground() {
@@ -79,29 +82,36 @@ class PlayerViewModel(
         }
     }
 
-    private fun updatePlaybackProgress() {
-        val positionMs = playerInteractor.getCurrentPosition()
-        val currentState = playerScreenStateLiveData.value
-        if (currentState?.playerState == PlayerState.PLAYING) {
-            playerScreenStateLiveData.postValue(
-                currentState.copy(playbackPosition = SimpleDateFormat("mm:ss", Locale.getDefault()).format(positionMs))
-            )
+
+    private fun startTimer() {
+        timerJob?.cancel()
+        timerJob = viewModelScope.launch {
+            while (true) {
+                delay(UPDATE_INTERVAL_MS)
+
+                val currentState = playerScreenStateLiveData.value
+                if (currentState?.playerState != PlayerState.PLAYING) {
+                    break
+                }
+
+                val positionMs = playerInteractor.getCurrentPosition()
+                playerScreenStateLiveData.postValue(
+                    currentState.copy(
+                        playbackPosition = SimpleDateFormat(
+                            "mm:ss",
+                            Locale.getDefault()
+                        ).format(positionMs)
+                    )
+                )
+            }
         }
     }
 
-
-    private val updatePlaybackProgressRunnable = object : Runnable {
-        override fun run() {
-            updatePlaybackProgress()
-            handler.postDelayed(this, UPDATE_INTERVAL_MS)
-        }
-    }
 
     override fun onCleared() {
         super.onCleared()
         pausePlayer()
         playerInteractor.release()
-        handler.removeCallbacksAndMessages(null)
     }
 
 }

@@ -1,9 +1,6 @@
 package com.saturnnetwork.playlistmaker.search.ui
 
-import android.content.res.Resources
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -15,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.saturnnetwork.playlistmaker.R
@@ -22,6 +20,9 @@ import com.saturnnetwork.playlistmaker.databinding.SearchFragmentBinding
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import com.saturnnetwork.playlistmaker.utils.hide
 import com.saturnnetwork.playlistmaker.utils.show
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment: Fragment() {
@@ -34,12 +35,6 @@ class SearchFragment: Fragment() {
     private lateinit var adapterSearchHistory: TrackAdapter
     private var suppressUIUpdate = false
     private var blockTextWatcher = false
-
-
-    companion object {
-        private const val SEARCH_DELAY_MILLIS = 2000L
-    }
-    private val handler = Handler(Looper.getMainLooper())
 
 
     private val viewModel: SearchViewModel by viewModel()
@@ -131,7 +126,7 @@ class SearchFragment: Fragment() {
                             ?.getInsets(WindowInsetsCompat.Type.navigationBars())
                             ?.bottom ?: 0
 
-                        val screenHeight = view!!.height
+                        val screenHeight = requireView().height
                         val safeScreenHeight = screenHeight - navBarHeight
 
                         val isLastItemVisible = lastViewBottom <= safeScreenHeight
@@ -308,15 +303,6 @@ class SearchFragment: Fragment() {
             viewModel.clearHistory()
         }
 
-        val searchRunnable = Runnable {
-            if (globalSearchText.isNotBlank()) {
-                viewModel.searchTracks(globalSearchText.toString()) }
-        }
-
-        fun searchDebounce() {
-            handler.removeCallbacks(searchRunnable)
-            handler.postDelayed(searchRunnable, SEARCH_DELAY_MILLIS)
-        }
 
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -329,7 +315,7 @@ class SearchFragment: Fragment() {
                 if (!suppressUIUpdate && binding.searchInput.hasFocus() && s?.isEmpty() == true) {
                     viewModel.loadFromHistory()
                 } else {
-                    searchDebounce()
+                    //searchDebounce(binding.searchInput.text.toString())
                 }
 
             }
@@ -355,7 +341,6 @@ class SearchFragment: Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        handler.removeCallbacksAndMessages(null)
     }
 
 }

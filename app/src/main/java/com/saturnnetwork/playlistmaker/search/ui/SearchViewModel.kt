@@ -3,15 +3,44 @@ package com.saturnnetwork.playlistmaker.search.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.saturnnetwork.playlistmaker.R
 import com.saturnnetwork.playlistmaker.search.domain.TracksInteractor
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchViewModel(private val interactor: TracksInteractor): ViewModel() {
 
+    companion object {
+        private const val SEARCH_DELAY_MILLIS = 2000L
+    }
+
+    private var searchJob: Job? = null
+    private var lastSearchText: String = ""
+
     private val searchText = MutableLiveData<String>("")
 
+    fun searchDebounce(changedText: String) {
+        if (lastSearchText == changedText || changedText.isEmpty()) {
+            // searchJob?.cancel() -> кейс когда ползователь стирает текст клавишей backspace
+            // и нужно не выполнять поиск по последней оставшейся букве в строке
+            searchJob?.cancel()
+            return
+        }
+
+        lastSearchText = changedText
+
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DELAY_MILLIS)
+            searchTracks(changedText)
+        }
+    }
+
     fun setSearchText(text: String) {
+        searchDebounce(text)
         searchText.value = text
     }
 
