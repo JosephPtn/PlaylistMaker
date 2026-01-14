@@ -6,7 +6,6 @@ package com.saturnnetwork.playlistmaker.search.domain
 
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
-import java.util.concurrent.Executors
 import com.saturnnetwork.playlistmaker.search.domain.models.TracksResponse
 
 class TracksInteractorImpl (private val repository: TracksRepository): TracksInteractor {
@@ -16,8 +15,6 @@ class TracksInteractorImpl (private val repository: TracksRepository): TracksInt
         return repository.searchTracks(expression)
     }
 
-
-    // отправляем трек в repository (метод saveToHistory)
     override fun saveToHistory(track: Track) {
         repository.saveToHistory(track)
     }
