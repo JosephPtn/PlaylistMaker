@@ -79,7 +79,37 @@ class SearchViewModel(private val interactor: TracksInteractor): ViewModel() {
                 errorMessageRes = null,
                 composition = "search_result")
             )
-            interactor.searchTracks(expression = searchInput,
+
+            viewModelScope.launch {
+                interactor.searchTracks(searchInput).collect { response ->
+                    if (response.resultCode == 200) {
+                        if (response.results.isEmpty()) {
+                            searchStateLiveData.postValue(SearchState(
+                                tracks = arrayListOf<Track>(),
+                                isLoading = false,
+                                errorMessageRes = R.string.nothing_was_found,
+                                composition = "error")
+                            )
+                        } else {
+                            searchStateLiveData.postValue(SearchState(
+                                tracks = response.results,
+                                isLoading = false,
+                                errorMessageRes = null,
+                                composition = "search_result")
+                            )
+                        }
+                    } else {
+                        searchStateLiveData.postValue(SearchState(
+                            tracks = arrayListOf<Track>(),
+                            isLoading = false,
+                            errorMessageRes = R.string.connection_issues,
+                            composition = "error")
+                        )
+                    }
+                }
+            }
+
+            /*interactor.searchTracks(expression = searchInput,
                 consumer = object : TracksInteractor.TracksConsumer {
                     override fun consume(foundTracks: ArrayList<Track>) {
                         if (foundTracks.isNotEmpty()) {
@@ -109,7 +139,7 @@ class SearchViewModel(private val interactor: TracksInteractor): ViewModel() {
                         )
                     }
 
-                })
+                })*/
         } else {
             searchStateLiveData.postValue(SearchState(
                 tracks = ArrayList<Track>(),
