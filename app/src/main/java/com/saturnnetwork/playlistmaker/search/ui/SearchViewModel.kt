@@ -169,5 +169,9 @@ class SearchViewModel(private val interactor: TracksInteractor): ViewModel() {
         return interactor.isFavoriteTrack(track)
     }
 
+    suspend fun trackToHistory(track: Track) {
+        interactor.saveToHistory(track)
+    }
+
 
 }

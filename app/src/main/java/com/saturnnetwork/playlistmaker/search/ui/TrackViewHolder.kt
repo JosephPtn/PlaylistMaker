@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -26,7 +27,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class TrackViewHolder (itemView: View,
-                       private val interactor: TracksInteractor,
+                       private val onHistoryTrack: (Track) -> Unit,
                        private val onTrackClick: (Track) -> Unit): RecyclerView.ViewHolder(itemView){
 
     private val trackNameImage: ImageView = itemView.findViewById(R.id.trackNameImage)
@@ -51,9 +52,14 @@ class TrackViewHolder (itemView: View,
         trackName.text = track.trackName
         artistName.text = track.artistName
         trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime)
+        val radiusPx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            2f,
+            itemView.context.resources.displayMetrics
+        ).toInt()
         Glide.with(itemView)
             .load(track.artworkUrl100)
-            .transform(RoundedCorners(2))
+            .transform(RoundedCorners(radiusPx))
             .placeholder(R.drawable.placeholder)
             .error(R.drawable.placeholder)
             .into(trackNameImage)
@@ -63,7 +69,7 @@ class TrackViewHolder (itemView: View,
 
             clickJob = scope.launch {
                 withContext(Dispatchers.IO) {
-                    interactor.saveToHistory(track)
+                    onHistoryTrack(track)
                 }
                 onTrackClick(track)
                 delay(CLICK_DEBOUNCE_DELAY)

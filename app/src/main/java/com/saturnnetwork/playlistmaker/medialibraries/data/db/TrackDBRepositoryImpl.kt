@@ -4,6 +4,7 @@ import com.saturnnetwork.playlistmaker.medialibraries.data.db.converters.TrackDb
 import com.saturnnetwork.playlistmaker.medialibraries.domain.db.TrackDBRepository
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 class TrackDBRepositoryImpl(
@@ -17,7 +18,6 @@ class TrackDBRepositoryImpl(
     }
 
     override suspend fun deleteFromFavorite(id: String) {
-        println("deleteFromFavorite")
         appDatabase.trackDao().deleteTrackById(id)
     }
 
@@ -25,5 +25,6 @@ class TrackDBRepositoryImpl(
         appDatabase.trackDao()
             .getTracks()
             .map { it.map(converter::fromEntity) }
+            .distinctUntilChanged()
 
 }

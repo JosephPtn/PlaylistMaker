@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.saturnnetwork.playlistmaker.R
 import com.saturnnetwork.playlistmaker.databinding.FragmentFavoriteTracksBinding
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
+import com.saturnnetwork.playlistmaker.search.ui.TrackAdapter
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
@@ -45,7 +46,7 @@ class FragmentFavoriteTracks: Fragment() {
     */
     private var _binding: FragmentFavoriteTracksBinding? = null
     private val binding get() = _binding!!
-    private lateinit var adapter: FavorityTracksTrackAdapter
+    private lateinit var adapter: TrackAdapter
 
     private fun initRecycler() {
         binding.tracksRecyclerView.layoutManager = GridLayoutManager(
@@ -53,7 +54,7 @@ class FragmentFavoriteTracks: Fragment() {
             GridLayoutManager.VERTICAL, false
         )
 
-        adapter = FavorityTracksTrackAdapter(arrayListOf(), onTrackClick)
+        adapter = TrackAdapter(arrayListOf(), { }, onTrackClick)
         binding.tracksRecyclerView.adapter = adapter
     }
 
@@ -84,7 +85,7 @@ class FragmentFavoriteTracks: Fragment() {
                 binding.emptyPlaceholder.visibility = View.INVISIBLE
                 binding.titleEmptyPlaceholder.visibility = View.INVISIBLE
                 binding.tracksRecyclerView.visibility = View.VISIBLE
-                adapter = FavorityTracksTrackAdapter(ArrayList(reversedList), onTrackClick)
+                adapter = TrackAdapter(ArrayList(reversedList), {}, onTrackClick)
                 binding.tracksRecyclerView.adapter = adapter
             }
         }
