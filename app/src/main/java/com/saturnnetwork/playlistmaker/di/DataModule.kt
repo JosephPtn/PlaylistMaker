@@ -2,8 +2,10 @@ package com.saturnnetwork.playlistmaker.di
 
 import android.content.Context
 import android.media.MediaPlayer
+import androidx.room.Room
 import com.google.gson.Gson
 import com.saturnnetwork.playlistmaker.main.data.ThemeRepository
+import com.saturnnetwork.playlistmaker.medialibraries.data.db.AppDatabase
 import com.saturnnetwork.playlistmaker.search.data.NetworkClient
 import com.saturnnetwork.playlistmaker.search.data.network.ItunesApiService
 import com.saturnnetwork.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -46,6 +48,12 @@ val dataModule = module {
     factory { ThemeRepository(androidContext()) }
 
     factory { MediaPlayer() }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
+    }
+
 
 
 }

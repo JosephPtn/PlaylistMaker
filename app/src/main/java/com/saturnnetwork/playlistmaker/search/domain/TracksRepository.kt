@@ -9,11 +9,13 @@ interface TracksRepository {
     fun searchTracks(expression: String): Flow<TracksResponse>
 
     // inmpl in TracksRepositoryImpl
-    fun saveToHistory(track: Track)
+    suspend fun saveToHistory(track: Track)
 
     // inmpl in TracksRepositoryImpl
-    fun loadFromHistory(): ArrayList<Track>
+    suspend fun loadFromHistory(): ArrayList<Track>
 
     fun clearHistory()
+
+    suspend fun isFavoriteTrack(track: Track): Boolean
 
 }

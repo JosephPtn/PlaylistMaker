@@ -1,17 +1,19 @@
 package com.saturnnetwork.playlistmaker.player.ui
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.saturnnetwork.playlistmaker.R
 import com.saturnnetwork.playlistmaker.databinding.PlayerFragmentBinding
-import com.saturnnetwork.playlistmaker.player.domain.PlayerState
+import com.saturnnetwork.playlistmaker.player.ui.PlayerState
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import com.saturnnetwork.playlistmaker.utils.gone
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -87,6 +89,11 @@ class PlayerFragment: Fragment() {
     }
 
     private fun renderState(state: PlayerScreenState) {
+
+        binding.heartImage.setImageResource(
+            if (state.isFavorite) R.drawable.heart_like
+            else R.drawable.heart
+        )
         when (state.playerState) {
             PlayerState.PREPARED -> {
                 setTrackData(state.track)
@@ -122,12 +129,16 @@ class PlayerFragment: Fragment() {
         if (track != null && viewModel.track.value == null) {
             viewModel.setTrack(track)
         }
-        viewModel.observeScreenStateLiveData().observe(this) { state ->
+        viewModel.observeScreenStateLiveData().observe(viewLifecycleOwner) { state ->
             renderState(state)
         }
 
         binding.playbackControlButton.setOnClickListener {
             viewModel.playbackControl()
+        }
+
+        binding.addToFavoritesButton.setOnClickListener {
+            viewModel.addToFavorites(track!!)
         }
 
         binding.btnBackFromPlayer.setOnClickListener {

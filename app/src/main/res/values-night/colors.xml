@@ -27,6 +27,7 @@
     <color name="btn_addToPlaylist_addToFavoritesButton">#535459</color>
     <color name="playbackControlColor1">#FFFFFF</color>
     <color name="playbackControlColor2">#1A1B22</color>
+    <color name="favorite_picture">#F56B6C</color>
 
     <color name="YP_White">#FFFFFF</color>
     <color name="YP_Black">#1A1B22</color>

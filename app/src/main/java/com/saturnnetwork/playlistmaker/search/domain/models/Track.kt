@@ -17,4 +17,5 @@ data class Track (
     var primaryGenreName: String,
     var country: String,
     var previewUrl: String,
+    var isFavorite: Boolean = false
 ) : Serializable

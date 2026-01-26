@@ -40,10 +40,18 @@ class SearchFragment: Fragment() {
     private val viewModel: SearchViewModel by viewModel()
 
     val onTrackClick: (Track) -> Unit = { track ->
-        findNavController().navigate(
-            R.id.action_searchFragment_to_playerFragment,
-            Bundle().apply { putSerializable("track", track) }
-        )
+        viewLifecycleOwner.lifecycleScope.launch {
+            val isFavorite = viewModel.isFavoriteTrack(track)
+            if (isFavorite) {
+                track.isFavorite = true
+            } else {
+                track.isFavorite = false
+            }
+            findNavController().navigate(
+                R.id.action_searchFragment_to_playerFragment,
+                Bundle().apply { putSerializable("track", track) }
+            )
+        }
     }
 
     private fun showLoading() {

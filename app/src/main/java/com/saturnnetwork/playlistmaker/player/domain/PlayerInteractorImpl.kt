@@ -1,5 +1,6 @@
 package com.saturnnetwork.playlistmaker.player.domain
 
+import com.saturnnetwork.playlistmaker.player.domain.PlayerRepository
 import com.saturnnetwork.playlistmaker.player.domain.PlayerInteractor
 
 class PlayerInteractorImpl(private val repository: PlayerRepository) : PlayerInteractor {

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
+    id("kotlin-kapt")
 }
 
 android {
@@ -48,6 +49,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.room.common.jvm)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -61,5 +63,22 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
     implementation("androidx.fragment:fragment-ktx:1.5.6")
+
+    // Основная библиотека Room
+    // @Entity
+    // @Dao
+    // @Database
+    // сам движок SQLite
+    implementation("androidx.room:room-runtime:2.7.0")
+    // Компилятор аннотаций
+    // генерирует код на основе @Dao, @Entity, @Query
+    // без него проект не соберётся, он требует id("kotlin-kapt")
+    kapt("androidx.room:room-compiler:2.7.0")
+    // Kotlin extensions (coroutines)
+    // Добавляет:
+    // suspend функции в DAO
+    // поддержку Flow
+    // корутины вместо колбэков
+    implementation("androidx.room:room-ktx:2.7.0")
 
 }
