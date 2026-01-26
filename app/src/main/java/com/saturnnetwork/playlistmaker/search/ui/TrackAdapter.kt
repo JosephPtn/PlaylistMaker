@@ -26,4 +26,8 @@ class TrackAdapter(
         holder.bind(tracks[position])
     }
 
+    override fun onViewRecycled(holder: TrackViewHolder) {
+        holder.unbind()
+    }
+
 }

@@ -83,7 +83,6 @@
                     app:srcCompat="@drawable/ic_point"
                     app:tint="@color/recycler_content_color" />
 
-
                 <TextView
                     android:id="@+id/trackTime"
                     style="@style/recycler_content"

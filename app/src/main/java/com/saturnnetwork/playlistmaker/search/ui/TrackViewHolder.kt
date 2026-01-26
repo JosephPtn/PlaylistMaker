@@ -14,6 +14,14 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.saturnnetwork.playlistmaker.R
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import com.saturnnetwork.playlistmaker.search.domain.TracksInteractor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -26,20 +34,17 @@ class TrackViewHolder (itemView: View,
     private val artistName: TextView = itemView.findViewById(R.id.artistName)
     private val trackTime: TextView = itemView.findViewById(R.id.trackTime)
 
+    private val scope = CoroutineScope(
+        SupervisorJob() + Dispatchers.Main
+    )
+    private var clickJob: Job? = null
+
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
-    private var isClickAllowed = true
 
-    private val handler = Handler(Looper.getMainLooper())
-
-    private fun clickDebounce() : Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
+    fun unbind() {
+        scope.coroutineContext.cancelChildren()
     }
 
     fun bind(track: Track) {
@@ -54,12 +59,17 @@ class TrackViewHolder (itemView: View,
             .into(trackNameImage)
 
         itemView.setOnClickListener {
-            if (clickDebounce()) {
-                interactor.saveToHistory(track)
-                onTrackClick(track)
-            }
+            if (clickJob?.isActive == true) return@setOnClickListener
 
+            clickJob = scope.launch {
+                withContext(Dispatchers.IO) {
+                    interactor.saveToHistory(track)
+                }
+                onTrackClick(track)
+                delay(CLICK_DEBOUNCE_DELAY)
+            }
         }
+
     }
 
 }

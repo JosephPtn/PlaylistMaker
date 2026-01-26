@@ -1,9 +1,12 @@
 package com.saturnnetwork.playlistmaker.search.domain
 
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
+import com.saturnnetwork.playlistmaker.search.domain.models.TracksResponse
+import kotlinx.coroutines.flow.Flow
 
 interface TracksInteractor {
-    fun searchTracks(expression: String, consumer: TracksConsumer)
+
+    fun searchTracks(expression: String): Flow<TracksResponse>
 
     fun saveToHistory(track: Track)
 
@@ -11,11 +14,5 @@ interface TracksInteractor {
 
     fun clearHistory()
 
-
-    // Это интерфейс-обратный вызов (callback), который получает список треков:
-    interface TracksConsumer {
-        fun consume(foundTracks: ArrayList<Track>)
-        fun onError()
-    }
 
 }

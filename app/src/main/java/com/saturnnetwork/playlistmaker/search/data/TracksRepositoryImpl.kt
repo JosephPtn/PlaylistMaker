@@ -22,7 +22,10 @@ import com.saturnnetwork.playlistmaker.search.domain.TracksRepository
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import com.saturnnetwork.playlistmaker.search.data.dto.SearchRequest
 import com.saturnnetwork.playlistmaker.search.data.dto.SearchResponse
+import com.saturnnetwork.playlistmaker.search.domain.models.TracksResponse
 import com.saturnnetwork.playlistmaker.search.data.dto.TrackDTO
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlin.collections.removeAll
 
 class TracksRepositoryImpl (private val networkClient: NetworkClient,
@@ -47,23 +50,15 @@ class TracksRepositoryImpl (private val networkClient: NetworkClient,
         previewUrl = this.previewUrl
     )
 
-    /*override fun searchTracks(expression: String): ArrayList<Track> {
-        val response = networkClient.doRequest(SearchRequest(expression))
-        if (response.resultCode == 200) {
-            val tracks =(response as SearchResponse).results.map { it.toTrack() } as ArrayList<Track>
-            return tracks
-        } else {
-            return ArrayList()
-        }
-    }*/
 
-    override fun searchTracks(expression: String): ArrayList<Track> {
+    override fun searchTracks(expression: String): Flow<TracksResponse> = flow {
         val response = networkClient.doRequest(SearchRequest(expression))
         if (response.resultCode == 200) {
-            return (response as SearchResponse).results.map { it.toTrack() } as ArrayList<Track>
+            emit(TracksResponse((response as SearchResponse).results.map { it.toTrack() } as ArrayList<Track>, 200))
         } else {
-            throw Exception("Network error: ${response.resultCode}")
+            emit(TracksResponse(ArrayList(), response.resultCode))
         }
+
     }
 
 
