@@ -1,5 +1,7 @@
 package com.saturnnetwork.playlistmaker.di
 
+import com.saturnnetwork.playlistmaker.medialibraries.domain.db.PlaylistInteractor
+import com.saturnnetwork.playlistmaker.medialibraries.domain.db.PlaylistInteractorImpl
 import com.saturnnetwork.playlistmaker.player.domain.PlayerInteractor
 import com.saturnnetwork.playlistmaker.player.domain.PlayerInteractorImpl
 import com.saturnnetwork.playlistmaker.medialibraries.domain.db.TrackDBInteractor
@@ -26,6 +28,10 @@ val interactorModule = module {
 
     factory<TrackDBInteractor> {
         TrackDBInteractorImpl(get())
+    }
+
+    factory<PlaylistInteractor> {
+        PlaylistInteractorImpl(get())
     }
 
 }

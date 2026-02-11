@@ -33,4 +33,12 @@
     <string name="new_playlist">Новый плейлист</string>
     <string name="you_havent_playlist">Вы не создали\nни одного плейлиста</string>
 
+    <!-- create_playlist_fragment-->
+    <string name="name">Название*</string>
+    <string name="description">Описание</string>
+    <string name="create">Создать</string>
+
+    <!-- insert_in_playlist_fragment-->
+    <string name="add_to_playlist">Добавить в плейлист</string>
+
 </resources>

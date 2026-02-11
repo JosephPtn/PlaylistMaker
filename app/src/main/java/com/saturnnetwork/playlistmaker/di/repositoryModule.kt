@@ -1,8 +1,10 @@
 package com.saturnnetwork.playlistmaker.di
 
+import com.saturnnetwork.playlistmaker.medialibraries.data.db.PlaylistDBRepositoryImpl
 import com.saturnnetwork.playlistmaker.player.data.PlayerRepositoryImpl
 import com.saturnnetwork.playlistmaker.medialibraries.data.db.converters.TrackDbConvertor
 import com.saturnnetwork.playlistmaker.medialibraries.data.db.TrackDBRepositoryImpl
+import com.saturnnetwork.playlistmaker.medialibraries.domain.db.PlaylistDBRepository
 import com.saturnnetwork.playlistmaker.player.domain.PlayerRepository
 import com.saturnnetwork.playlistmaker.medialibraries.domain.db.TrackDBRepository
 import com.saturnnetwork.playlistmaker.search.data.TracksRepositoryImpl
@@ -29,5 +31,9 @@ val repositoryModule = module {
 
     single<TrackDBRepository> {
         TrackDBRepositoryImpl(get(), get())
+    }
+
+    single<PlaylistDBRepository> {
+        PlaylistDBRepositoryImpl(get(), get())
     }
 }

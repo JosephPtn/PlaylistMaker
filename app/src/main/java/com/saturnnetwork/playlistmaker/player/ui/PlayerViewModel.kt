@@ -4,19 +4,30 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.saturnnetwork.playlistmaker.medialibraries.domain.db.PlaylistInteractor
 import com.saturnnetwork.playlistmaker.medialibraries.domain.db.TrackDBInteractor
+import com.saturnnetwork.playlistmaker.medialibraries.domain.model.Playlist
 import com.saturnnetwork.playlistmaker.player.domain.PlayerInteractor
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
-    private val trackDBInteractor: TrackDBInteractor
+    private val trackDBInteractor: TrackDBInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     companion object {
@@ -141,5 +152,39 @@ class PlayerViewModel(
         pausePlayer()
         playerInteractor.release()
     }
+
+    private val _playlist = MutableStateFlow<List<Playlist>>(emptyList())
+
+    val playlist: StateFlow<List<Playlist>> =
+        _playlist.asStateFlow()
+
+    private val _eventFlow = MutableSharedFlow<String>()
+    val eventFlow = _eventFlow.asSharedFlow()
+
+    fun getAllPlaylists() {
+        viewModelScope.launch {
+            playlistInteractor.getAllPlaylists()
+                .collect { playlists ->
+                    _playlist.emit(playlists)
+                }
+        }
+    }
+
+    fun onClickItem(trackId: String, playlistId: Long) {
+        viewModelScope.launch {
+            val playlist = playlistInteractor
+                .getPlaylistById(playlistId)
+                .first()
+            if (trackId in playlist.trackIds) {
+                _eventFlow.emit("Трек уже добавлен в плейлист ${playlist.name}")
+            } else {
+                val updatedList: List<String> = playlist.trackIds + trackId
+                val jsonString = Json.encodeToString(updatedList)
+                playlistInteractor.insertTracksId(jsonString, playlistId)
+                _eventFlow.emit("Добавлено в плейлист ${playlist.name}")
+            }
+        }
+    }
+
 
 }

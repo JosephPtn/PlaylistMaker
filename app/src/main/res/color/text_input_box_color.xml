@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Цвет рамки при фокусе -->
+    <item android:color="@color/_text_input_box_color" android:state_focused="true"/>
+
+    <!-- Цвет рамки, когда поле НЕ в фокусе -->
+    <item android:color="@color/_text_input_box_color"/>
+
+</selector>
