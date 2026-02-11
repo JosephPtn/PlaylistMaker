@@ -8,6 +8,7 @@ import com.saturnnetwork.playlistmaker.medialibraries.domain.db.PlaylistInteract
 import com.saturnnetwork.playlistmaker.medialibraries.domain.db.TrackDBInteractor
 import com.saturnnetwork.playlistmaker.medialibraries.domain.model.Playlist
 import com.saturnnetwork.playlistmaker.player.domain.PlayerInteractor
+import com.saturnnetwork.playlistmaker.player.ui.insertplaylist.InsertPLUIState
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -153,35 +154,45 @@ class PlayerViewModel(
         playerInteractor.release()
     }
 
-    private val _playlist = MutableStateFlow<List<Playlist>>(emptyList())
 
-    val playlist: StateFlow<List<Playlist>> =
-        _playlist.asStateFlow()
+    private var _playlist = MutableLiveData<List<Playlist>>(emptyList())
+    fun observePlaylist(): LiveData<List<Playlist>> = _playlist
 
-    private val _eventFlow = MutableSharedFlow<String>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    private var _eventFlow = MutableLiveData<InsertPLUIState>()
+    fun observeEventFlow(): LiveData<InsertPLUIState> = _eventFlow
+
 
     fun getAllPlaylists() {
         viewModelScope.launch {
             playlistInteractor.getAllPlaylists()
                 .collect { playlists ->
-                    _playlist.emit(playlists)
+                    _playlist.postValue(playlists)
                 }
         }
     }
 
+    // "Трек уже добавлен в плейлист ${playlist.name}"
     fun onClickItem(trackId: String, playlistId: Long) {
         viewModelScope.launch {
             val playlist = playlistInteractor
                 .getPlaylistById(playlistId)
                 .first()
             if (trackId in playlist.trackIds) {
-                _eventFlow.emit("Трек уже добавлен в плейлист ${playlist.name}")
+                _eventFlow.postValue(InsertPLUIState(
+                    plIsAdded = false,
+                    olIsExist = true,
+                    message = "Трек уже добавлен в плейлист ${playlist.name}"
+                ))
             } else {
                 val updatedList: List<String> = playlist.trackIds + trackId
                 val jsonString = Json.encodeToString(updatedList)
                 playlistInteractor.insertTracksId(jsonString, playlistId)
-                _eventFlow.emit("Добавлено в плейлист ${playlist.name}")
+                _eventFlow.postValue(InsertPLUIState(
+                    plIsAdded = true,
+                    olIsExist = false,
+                    message = "Добавлено в плейлист ${playlist.name}"
+                ))
+
             }
         }
     }

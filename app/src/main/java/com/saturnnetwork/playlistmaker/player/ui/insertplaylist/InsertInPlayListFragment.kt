@@ -32,8 +32,6 @@ class InsertInPlayListFragment(): BottomSheetDialogFragment() {
             requireContext(), spanCount,
             GridLayoutManager.VERTICAL, false
         )
-
-
         adapter = InsertPlaylistAdapter(
             arrayListOf(),
             onClickItem = { playlistId ->
@@ -67,22 +65,24 @@ class InsertInPlayListFragment(): BottomSheetDialogFragment() {
                 R.id.action_insertInPlayListFragment_to_fragmentCreatePlaylist)
         }
 
-        lifecycleScope.launch {
-            viewModel.playlist.collectLatest { playlists ->
-                val layoutManager = binding.recyclerView.layoutManager as? GridLayoutManager
-                layoutManager?.requestLayout()
-                adapter.updateGroups(playlists)
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.eventFlow.collect { message ->
+        viewModel.observeEventFlow().observe(viewLifecycleOwner) { state ->
+            if (state.olIsExist) {
                 Toast.makeText(requireContext(),
-                    message,
+                    state.message,
+                    Toast.LENGTH_SHORT).show()
+            } else if (state.plIsAdded) {
+                Toast.makeText(requireContext(),
+                    state.message,
                     Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
             }
+        }
 
+
+        viewModel.observePlaylist().observe(viewLifecycleOwner) { playlists ->
+            val layoutManager = binding.recyclerView.layoutManager as? GridLayoutManager
+            layoutManager?.requestLayout()
+            adapter.updateGroups(playlists)
         }
 
         viewModel.getAllPlaylists()

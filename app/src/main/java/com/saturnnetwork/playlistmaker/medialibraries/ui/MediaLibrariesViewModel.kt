@@ -92,20 +92,14 @@ class MediaLibrariesViewModel(private val interactor: TrackDBInteractor,
     }
 
 
-    private val _fragmentPlaylistViewState = MutableStateFlow(
-        FragmentPlaylistScreenState(
-            playlist = arrayListOf()
-        )
-    )
-    val fragmentPlaylistViewState: StateFlow<FragmentPlaylistScreenState> = _fragmentPlaylistViewState.asStateFlow()
+    private var _playlist = MutableLiveData<List<Playlist>>(emptyList())
+    fun observePlaylist(): LiveData<List<Playlist>> = _playlist
 
     fun getAllPlaylists() {
         viewModelScope.launch {
             playlistInteractor.getAllPlaylists()
                 .collect { playlists ->
-                    _fragmentPlaylistViewState.update { currentState ->
-                        currentState.copy(playlist = playlists)
-                    }
+                    _playlist.postValue(playlists)
                 }
         }
     }

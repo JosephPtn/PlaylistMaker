@@ -121,13 +121,11 @@ class FragmentCreatePlaylist: Fragment() {
 
             if (binding.addPicture.tag != 0 || isNameNotBlank || isDescriptionNotBlank) {
                 val confirmDialog = MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Завершить создание плейлиста?")
-                    .setMessage("Все несохраненные данные будут потеряны")
-                    .setNeutralButton("Отмена") { dialog, which ->
+                    .setTitle(requireContext().getString(R.string.finish_creating_the_playlist))
+                    .setMessage(requireContext().getString(R.string.all_unsaved_data_will_be_lost))
+                    .setNeutralButton(requireContext().getString(R.string.cancel)) { dialog, which ->
                         // ничего не делаем
-                    }.setPositiveButton("Завершить") { dialog, which ->
-                        // сохраняем изменения и выходим
-                        // save()
+                    }.setPositiveButton(requireContext().getString(R.string.complete)) { dialog, which ->
                         findNavController().popBackStack()
                     }.show()
             } else {
@@ -149,7 +147,9 @@ class FragmentCreatePlaylist: Fragment() {
             viewModel.cPViewState.collectLatest { state ->
                 if (state.createPlaylist) {
                     Toast.makeText(requireContext(),
-                        "Плейлист ${binding.playlistName.text} создан",
+                        "${requireContext().getString(R.string.playlist)} ${binding.playlistName.text} ${
+                            requireContext().getString(
+                                R.string.created)}",
                         Toast.LENGTH_SHORT).show()
                     findNavController().popBackStack()
                 }

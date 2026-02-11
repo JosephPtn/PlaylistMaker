@@ -72,24 +72,22 @@ class FragmentPlaylists: Fragment() {
                 R.id.action_mediaLibraryFragment_to_fragmentCreatePlaylist)
         }
 
-        lifecycleScope.launch {
-            viewModel.fragmentPlaylistViewState.collectLatest { state ->
-                if (state.playlist.isNotEmpty()) {
-                    //println(state.playlist)
-                    binding.emptyPlaceholder.visibility = View.INVISIBLE
-                    binding.titleEmptyPlaceholder.visibility = View.INVISIBLE
-                    binding.recyclerView.visibility = View.VISIBLE
-                    val layoutManager = binding.recyclerView.layoutManager as? GridLayoutManager
-                    layoutManager?.requestLayout()
-                    adapter.updateGroups(state.playlist)
-                } else {
-                    binding.emptyPlaceholder.visibility = View.VISIBLE
-                    binding.titleEmptyPlaceholder.visibility = View.VISIBLE
-                    binding.recyclerView.visibility = View.INVISIBLE
-                }
-
+        viewModel.observePlaylist().observe(viewLifecycleOwner) { playlists ->
+            if (playlists.isNotEmpty()) {
+                //println(state.playlist)
+                binding.emptyPlaceholder.visibility = View.INVISIBLE
+                binding.titleEmptyPlaceholder.visibility = View.INVISIBLE
+                binding.recyclerView.visibility = View.VISIBLE
+                val layoutManager = binding.recyclerView.layoutManager as? GridLayoutManager
+                layoutManager?.requestLayout()
+                adapter.updateGroups(playlists)
+            } else {
+                binding.emptyPlaceholder.visibility = View.VISIBLE
+                binding.titleEmptyPlaceholder.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.INVISIBLE
             }
         }
+
     }
 
     override fun onDestroyView() {
