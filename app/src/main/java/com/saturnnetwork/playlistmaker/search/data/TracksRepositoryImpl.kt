@@ -16,8 +16,11 @@ package com.saturnnetwork.playlistmaker.search.data
  */
 
 import android.content.SharedPreferences
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.saturnnetwork.playlistmaker.medialibraries.data.db.AppDatabase
 import com.saturnnetwork.playlistmaker.search.domain.TracksRepository
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import com.saturnnetwork.playlistmaker.search.data.dto.SearchRequest
@@ -25,12 +28,14 @@ import com.saturnnetwork.playlistmaker.search.data.dto.SearchResponse
 import com.saturnnetwork.playlistmaker.search.domain.models.TracksResponse
 import com.saturnnetwork.playlistmaker.search.data.dto.TrackDTO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlin.collections.removeAll
 
 class TracksRepositoryImpl (private val networkClient: NetworkClient,
                             private val sharedPrefs: SharedPreferences,
-                            private val gson: Gson
+                            private val gson: Gson,
+                            private val appDatabase: AppDatabase
 ): TracksRepository {
 
     // тут указываем ключ из файла (/data/data/<your.package.name>/shared_prefs/SharedPrefs.xml)
@@ -53,8 +58,20 @@ class TracksRepositoryImpl (private val networkClient: NetworkClient,
 
     override fun searchTracks(expression: String): Flow<TracksResponse> = flow {
         val response = networkClient.doRequest(SearchRequest(expression))
+        val allTrackFromFavorite =
+            appDatabase.trackDao().getTracks().first()
+
         if (response.resultCode == 200) {
-            emit(TracksResponse((response as SearchResponse).results.map { it.toTrack() } as ArrayList<Track>, 200))
+            val searchResponse = (response as SearchResponse).results.map { it.toTrack() } as ArrayList<Track>
+            searchResponse.forEach { track ->
+                for (fav in allTrackFromFavorite) {
+                    if (fav.trackId == track.trackId) {
+                        track.isFavorite = true
+                        break
+                    }
+                }
+            }
+            emit(TracksResponse(searchResponse, 200))
         } else {
             emit(TracksResponse(ArrayList(), response.resultCode))
         }
@@ -62,7 +79,8 @@ class TracksRepositoryImpl (private val networkClient: NetworkClient,
     }
 
 
-    override fun saveToHistory(track: Track) {
+    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+    override suspend fun saveToHistory(track: Track) {
         val currentHistory = loadFromHistory()
         currentHistory.removeAll { it.trackId == track.trackId }
         currentHistory.add(0, track)
@@ -72,14 +90,38 @@ class TracksRepositoryImpl (private val networkClient: NetworkClient,
         sharedPrefs.edit().putString(key, json).apply()
     }
 
-    override fun loadFromHistory(): ArrayList<Track> {
+    override suspend fun loadFromHistory(): ArrayList<Track> {
+        val allTrackFromFavorite =
+            appDatabase.trackDao().getTracks().first()
         val json = sharedPrefs.getString(key, null) ?: return ArrayList()
         val type = object : TypeToken<ArrayList<Track>>() {}.type
-        return gson.fromJson(json, type)
+        val history: ArrayList<Track> =  gson.fromJson(json, type)
+        history.forEach { track ->
+            for (fav in allTrackFromFavorite) {
+                if (fav.trackId == track.trackId) {
+                    track.isFavorite = true
+                    break
+                }
+            }
+        }
+        return history
+
     }
 
     override fun clearHistory() {
         sharedPrefs.edit().remove(key).apply()
+    }
+
+    override suspend fun isFavoriteTrack(track: Track): Boolean {
+        val allTrackFromFavorite =
+            appDatabase.trackDao().getTracks().first()
+        for (fav in allTrackFromFavorite) {
+            if (fav.trackId == track.trackId) {
+                track.isFavorite = true
+                return true
+            }
+        }
+        return false
     }
 
 }

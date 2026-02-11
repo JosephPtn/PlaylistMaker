@@ -60,15 +60,18 @@ class SearchViewModel(private val interactor: TracksInteractor): ViewModel() {
     }
 
     fun loadFromHistory() {
-        tracksFromHistory = interactor.loadFromHistory()
-        if (tracksFromHistory.isNotEmpty()) {
-            searchStateLiveData.postValue(SearchState(
-                tracks = tracksFromHistory,
-                isLoading = false,
-                errorMessageRes = null,
-                composition = "history")
-            )
+        viewModelScope.launch {
+            tracksFromHistory = interactor.loadFromHistory()
+            if (tracksFromHistory.isNotEmpty()) {
+                searchStateLiveData.postValue(SearchState(
+                    tracks = tracksFromHistory,
+                    isLoading = false,
+                    errorMessageRes = null,
+                    composition = "history")
+                )
+            }
         }
+
     }
 
     fun searchTracks(searchInput: String) {
@@ -160,6 +163,14 @@ class SearchViewModel(private val interactor: TracksInteractor): ViewModel() {
             errorMessageRes = null,
             composition = "search_result")
         )
+    }
+
+    suspend fun isFavoriteTrack(track: Track): Boolean {
+        return interactor.isFavoriteTrack(track)
+    }
+
+    suspend fun trackToHistory(track: Track) {
+        interactor.saveToHistory(track)
     }
 
 

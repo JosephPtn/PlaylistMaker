@@ -14,7 +14,11 @@
         android:id="@+id/mediaLibraryFragment"
         android:name="com.saturnnetwork.playlistmaker.medialibraries.ui.MediaLibraryFragment"
         android:label="MediaLibraryFragment"
-        tools:layout="@layout/media_library_fragment"/>
+        tools:layout="@layout/media_library_fragment">
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.saturnnetwork.playlistmaker.search.ui.SearchFragment"

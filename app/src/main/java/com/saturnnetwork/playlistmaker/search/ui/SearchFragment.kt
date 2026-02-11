@@ -40,10 +40,24 @@ class SearchFragment: Fragment() {
     private val viewModel: SearchViewModel by viewModel()
 
     val onTrackClick: (Track) -> Unit = { track ->
-        findNavController().navigate(
-            R.id.action_searchFragment_to_playerFragment,
-            Bundle().apply { putSerializable("track", track) }
-        )
+        viewLifecycleOwner.lifecycleScope.launch {
+            val isFavorite = viewModel.isFavoriteTrack(track)
+            if (isFavorite) {
+                track.isFavorite = true
+            } else {
+                track.isFavorite = false
+            }
+            findNavController().navigate(
+                R.id.action_searchFragment_to_playerFragment,
+                Bundle().apply { putSerializable("track", track) }
+            )
+        }
+    }
+
+    val onHistoryTrack: (Track) -> Unit = { track ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.trackToHistory(track)
+        }
     }
 
     private fun showLoading() {
@@ -108,7 +122,7 @@ class SearchFragment: Fragment() {
                 binding.tracksRecyclerView.isNestedScrollingEnabled = true
 
 
-                adapterSearchHistory = TrackAdapter(tracks, viewModel.getInteractor(), onTrackClick)
+                adapterSearchHistory = TrackAdapter(tracks, onHistoryTrack, onTrackClick)
                 binding.tracksRecyclerView.adapter = adapterSearchHistory
 
                 // Проверка, вышел ли RecyclerView за границу
@@ -216,14 +230,14 @@ class SearchFragment: Fragment() {
                 binding.tracksRecyclerView.layoutParams = params
                 binding.tracksRecyclerView.isNestedScrollingEnabled = true
 
-                adapter = TrackAdapter(tracks, viewModel.getInteractor(), onTrackClick)
+                adapter = TrackAdapter(tracks, onHistoryTrack, onTrackClick)
                 binding.tracksRecyclerView.adapter = adapter
 
             }
             "error" -> {
                 listOf(binding.searchProgressBar, binding.clearHistoryButton, binding.youSearched).hide()
                 listOf(binding.textError, binding.imgError).show()
-                adapter = TrackAdapter(tracks, viewModel.getInteractor(), onTrackClick)
+                adapter = TrackAdapter(tracks, onHistoryTrack, onTrackClick)
                 binding.tracksRecyclerView.adapter = adapter
                 binding.textError.text = error
                 if (error == getString(R.string.nothing_was_found)) {

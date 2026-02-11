@@ -8,11 +8,13 @@ interface TracksInteractor {
 
     fun searchTracks(expression: String): Flow<TracksResponse>
 
-    fun saveToHistory(track: Track)
+    suspend fun saveToHistory(track: Track)
 
-    fun loadFromHistory(): ArrayList<Track>
+    suspend fun loadFromHistory(): ArrayList<Track>
 
     fun clearHistory()
+
+    suspend fun isFavoriteTrack(track: Track): Boolean
 
 
 }

@@ -15,16 +15,20 @@ class TracksInteractorImpl (private val repository: TracksRepository): TracksInt
         return repository.searchTracks(expression)
     }
 
-    override fun saveToHistory(track: Track) {
+    override suspend fun saveToHistory(track: Track) {
         repository.saveToHistory(track)
     }
 
-    override fun loadFromHistory(): ArrayList<Track> {
+    override suspend fun loadFromHistory(): ArrayList<Track> {
         return repository.loadFromHistory()
     }
 
     override fun clearHistory() {
         repository.clearHistory()
+    }
+
+    override suspend fun isFavoriteTrack(track: Track): Boolean {
+        return repository.isFavoriteTrack(track)
     }
 
 

@@ -1,13 +1,11 @@
 package com.saturnnetwork.playlistmaker.player.ui
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.saturnnetwork.playlistmaker.medialibraries.domain.db.TrackDBInteractor
 import com.saturnnetwork.playlistmaker.player.domain.PlayerInteractor
-import com.saturnnetwork.playlistmaker.player.domain.PlayerState
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,7 +15,8 @@ import java.util.Locale
 
 
 class PlayerViewModel(
-    private val playerInteractor: PlayerInteractor
+    private val playerInteractor: PlayerInteractor,
+    private val trackDBInteractor: TrackDBInteractor
 ) : ViewModel() {
 
     companion object {
@@ -29,10 +28,14 @@ class PlayerViewModel(
     fun observeScreenStateLiveData(): LiveData<PlayerScreenState> = playerScreenStateLiveData
 
     val track = MutableLiveData<Track>()
+    var isFavorite = false
     private var timerJob: Job? = null
 
     fun setTrack(_track: Track) {
         track.value = _track
+        if (_track.isFavorite) {
+            isFavorite = true
+        }
         preparePlayer(_track.previewUrl)
     }
 
@@ -40,10 +43,10 @@ class PlayerViewModel(
         playerInteractor.preparePlayer(
             url,
             onPrepared = {
-                playerScreenStateLiveData.postValue(PlayerScreenState(PlayerState.PREPARED, track.value, "00:00"))
+                playerScreenStateLiveData.postValue(PlayerScreenState(PlayerState.PREPARED, track.value, "00:00", isFavorite))
             },
             onCompletion = {
-                playerScreenStateLiveData.postValue(PlayerScreenState(PlayerState.PREPARED, track.value, "00:00"))
+                playerScreenStateLiveData.postValue(PlayerScreenState(PlayerState.PREPARED, track.value, "00:00", isFavorite))
             })
     }
 
@@ -52,7 +55,7 @@ class PlayerViewModel(
          val currentTrack = track.value
          val currentPosition = playerScreenStateLiveData.value?.playbackPosition
          playerScreenStateLiveData.postValue(
-             PlayerScreenState(PlayerState.PLAYING, currentTrack, currentPosition)
+             PlayerScreenState(PlayerState.PLAYING, currentTrack, currentPosition, isFavorite)
          )
          startTimer()
 
@@ -62,7 +65,7 @@ class PlayerViewModel(
         playerInteractor.pause()
         val currentTrack = track.value
         val currentPosition = playerScreenStateLiveData.value?.playbackPosition
-        playerScreenStateLiveData.postValue(PlayerScreenState(PlayerState.PAUSED, currentTrack, currentPosition))
+        playerScreenStateLiveData.postValue(PlayerScreenState(PlayerState.PAUSED, currentTrack, currentPosition, isFavorite))
         timerJob?.cancel()
     }
 
@@ -107,6 +110,31 @@ class PlayerViewModel(
         }
     }
 
+    fun addToFavorites(track: Track) {
+        val currentState = playerScreenStateLiveData.value
+        if (isFavorite) {
+            isFavorite = false
+            if (currentState != null) {
+                playerScreenStateLiveData.postValue(
+                    currentState.copy(isFavorite = false)
+                )
+            }
+            viewModelScope.launch {
+                trackDBInteractor.deleteFromFavorite(track.trackId)
+            }
+        } else {
+            isFavorite = true
+            if (currentState != null) {
+                playerScreenStateLiveData.postValue(
+                    currentState.copy(isFavorite = true)
+                )
+            }
+            viewModelScope.launch {
+                trackDBInteractor.addTrackToFavorite(track)
+            }
+        }
+
+    }
 
     override fun onCleared() {
         super.onCleared()
