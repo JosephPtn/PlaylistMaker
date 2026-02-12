@@ -12,12 +12,15 @@
         tools:layout="@layout/setting_fragment" />
     <fragment
         android:id="@+id/mediaLibraryFragment"
-        android:name="com.saturnnetwork.playlistmaker.medialibraries.ui.MediaLibraryFragment"
+        android:name="com.saturnnetwork.playlistmaker.medialibraries.ui.Playlist.MediaLibraryFragment"
         android:label="MediaLibraryFragment"
         tools:layout="@layout/media_library_fragment">
         <action
             android:id="@+id/action_mediaLibraryFragment_to_playerFragment"
             app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_fragmentCreatePlaylist"
+            app:destination="@id/fragmentCreatePlaylist" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -32,5 +35,25 @@
         android:id="@+id/playerFragment"
         android:name="com.saturnnetwork.playlistmaker.player.ui.PlayerFragment"
         android:label="PlayerFragment"
-        tools:layout="@layout/player_fragment"/>
+        tools:layout="@layout/player_fragment">
+        <action
+            android:id="@+id/action_playerFragment_to_insertInPlayListFragment"
+            app:destination="@id/insertInPlayListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentCreatePlaylist"
+        android:name="com.saturnnetwork.playlistmaker.medialibraries.ui.CreatePlaylist.FragmentCreatePlaylist"
+        android:label="FragmentCreatePlaylist" />
+    <dialog
+        android:id="@+id/insertInPlayListFragment"
+        android:name="com.saturnnetwork.playlistmaker.player.ui.insertplaylist.InsertInPlayListFragment"
+        android:label="InsertInPlayListFragment" >
+        <argument
+            android:name="trackId"
+            app:argType="string"
+            android:defaultValue="" />
+        <action
+            android:id="@+id/action_insertInPlayListFragment_to_fragmentCreatePlaylist"
+            app:destination="@id/fragmentCreatePlaylist" />
+    </dialog>
 </navigation>

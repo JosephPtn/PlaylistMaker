@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -16,6 +18,7 @@ import com.saturnnetwork.playlistmaker.databinding.PlayerFragmentBinding
 import com.saturnnetwork.playlistmaker.player.ui.PlayerState
 import com.saturnnetwork.playlistmaker.search.domain.models.Track
 import com.saturnnetwork.playlistmaker.utils.gone
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.time.ZonedDateTime
@@ -129,6 +132,7 @@ class PlayerFragment: Fragment() {
         if (track != null && viewModel.track.value == null) {
             viewModel.setTrack(track)
         }
+
         viewModel.observeScreenStateLiveData().observe(viewLifecycleOwner) { state ->
             renderState(state)
         }
@@ -138,11 +142,19 @@ class PlayerFragment: Fragment() {
         }
 
         binding.addToFavoritesButton.setOnClickListener {
-            viewModel.addToFavorites(track!!)
+            track?.let { viewModel.addToFavorites(it) }
         }
 
         binding.btnBackFromPlayer.setOnClickListener {
             findNavController().popBackStack()
+        }
+
+        binding.addToPlaylistButton.setOnClickListener {
+            val action = PlayerFragmentDirections.actionPlayerFragmentToInsertInPlayListFragment(
+                track?.trackId ?: ""
+            )
+            findNavController().navigate(action)
+
         }
 
     }
