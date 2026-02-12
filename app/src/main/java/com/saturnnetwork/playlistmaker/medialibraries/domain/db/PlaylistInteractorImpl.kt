@@ -12,8 +12,8 @@ class PlaylistInteractorImpl(private val repository: PlaylistDBRepository): Play
         return repository.getAllPlaylists()
     }
 
-    override suspend fun insertTracksId(trackIds: String, playlistId: Long) {
-        repository.insertTracksId(trackIds, playlistId)
+    override suspend fun insertTracksId(trackIds: String, playlistId: Long, trackCount: Int) {
+        repository.insertTracksId(trackIds, playlistId, trackCount)
     }
 
     override fun getPlaylistById(playlistId: Long): Flow<Playlist> {

@@ -9,7 +9,7 @@ interface PlaylistInteractor {
 
     fun getAllPlaylists(): Flow<List<Playlist>>
 
-    suspend fun insertTracksId(trackIds: String, playlistId: Long)
+    suspend fun insertTracksId(trackIds: String, playlistId: Long, trackCount: Int)
 
     fun getPlaylistById(playlistId: Long): Flow<Playlist>
 

@@ -24,8 +24,8 @@ class PlaylistDBRepositoryImpl(private val appDatabase: PlaylistDatabase,
             .map { it.map(converter::fromEntity) }
             .distinctUntilChanged()
 
-    override suspend fun insertTracksId(trackIds: String, playlistId: Long) {
-        appDatabase.playlistDao().insertTracksId(trackIds, playlistId)
+    override suspend fun insertTracksId(trackIds: String, playlistId: Long, trackCount: Int) {
+        appDatabase.playlistDao().insertTracksId(trackIds, playlistId, trackCount)
     }
 
     override fun getPlaylistById(playlistId: Long): Flow<Playlist> =

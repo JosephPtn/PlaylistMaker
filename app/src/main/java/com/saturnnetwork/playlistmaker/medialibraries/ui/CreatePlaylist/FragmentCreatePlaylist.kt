@@ -11,10 +11,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -74,6 +76,24 @@ class FragmentCreatePlaylist: Fragment() {
 
     }
 
+    private fun showExitDialog() {
+        val isNameNotBlank = binding.playlistName.text?.toString()?.isNotBlank() ?: false
+        val isDescriptionNotBlank = binding.playlistDescription.text?.toString()?.isNotBlank() ?: false
+
+        if (binding.addPicture.tag != 0 || isNameNotBlank || isDescriptionNotBlank) {
+            val confirmDialog = MaterialAlertDialogBuilder(requireContext())
+                .setTitle(requireContext().getString(R.string.finish_creating_the_playlist))
+                .setMessage(requireContext().getString(R.string.all_unsaved_data_will_be_lost))
+                .setNeutralButton(requireContext().getString(R.string.cancel)) { dialog, which ->
+                    // ничего не делаем
+                }.setPositiveButton(requireContext().getString(R.string.complete)) { dialog, which ->
+                    findNavController().popBackStack()
+                }.show()
+        } else {
+            findNavController().popBackStack()
+        }
+    }
+
 
 
     override fun onCreateView(
@@ -89,23 +109,15 @@ class FragmentCreatePlaylist: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val simpleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner) { showExitDialog() }
 
-            }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                val text = s?.toString().orEmpty()
-                viewModel.setPlaylistName(text)
-
-            }
+        binding.playlistName.doOnTextChanged { text, _, _, _ ->
+            val value = text?.toString().orEmpty()
+            viewModel.setPlaylistName(value)
         }
 
-        binding.playlistName.addTextChangedListener(simpleTextWatcher)
 
         viewModel.setDefaultCoverIfEmpty("android.resource://${requireContext().packageName}/${R.drawable.playlist_add_photo}".toUri())
 
@@ -116,22 +128,9 @@ class FragmentCreatePlaylist: Fragment() {
         }
 
         binding.btnBack.setOnClickListener {
-            val isNameNotBlank = binding.playlistName.text?.toString()?.isNotBlank() ?: false
-            val isDescriptionNotBlank = binding.playlistDescription.text?.toString()?.isNotBlank() ?: false
-
-            if (binding.addPicture.tag != 0 || isNameNotBlank || isDescriptionNotBlank) {
-                val confirmDialog = MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(requireContext().getString(R.string.finish_creating_the_playlist))
-                    .setMessage(requireContext().getString(R.string.all_unsaved_data_will_be_lost))
-                    .setNeutralButton(requireContext().getString(R.string.cancel)) { dialog, which ->
-                        // ничего не делаем
-                    }.setPositiveButton(requireContext().getString(R.string.complete)) { dialog, which ->
-                        findNavController().popBackStack()
-                    }.show()
-            } else {
-                findNavController().popBackStack()
-            }
+            showExitDialog()
         }
+
 
         binding.createPlaylistButton.setOnClickListener {
             val isNameNotBlank = binding.playlistName.text?.toString()?.isNotBlank() ?: false

@@ -14,21 +14,24 @@ class InsertPlaylistViewHolder (private val binding: PlaylistCardInsertTrackBind
                           private val onClickItem: (Long) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
+    fun trackCount(count: Int): String {
+        val tracksForm = when {
+            count % 10 == 1 && count % 100 != 11 -> "трек"
+            count % 10 in 2..4 && (count % 100 !in 12..14) -> "трека"
+            else -> "треков"
+        }
+        return "$count $tracksForm"
+    }
+
     fun bind(playlist: Playlist) {
         binding.namePlaylist.text = playlist.name
-        binding.trackCount.text = playlist.trackCount.toString()
+        binding.trackCount.text = trackCount(playlist.trackCount.toInt())
 
-        if (playlist.coverImagePath.isEmpty()) {
-            Glide.with(itemView.context)
-                .load(R.drawable.placeholder)
-                .apply(RequestOptions.bitmapTransform(RoundedCorners(8)))
-                .into(binding.playlistCover)
-        } else {
-            Glide.with(itemView.context)
-                .load(playlist.coverImagePath.toUri())
-                .apply(RequestOptions.bitmapTransform(RoundedCorners(8)))
-                .into(binding.playlistCover)
-        }
+        Glide.with(itemView.context)
+            .load(playlist.coverImagePath.toUri())
+            .placeholder(R.drawable.placeholder)
+            .apply(RequestOptions.bitmapTransform(RoundedCorners(8)))
+            .into(binding.playlistCover)
 
         itemView.setOnClickListener {
             onClickItem(playlist.id)

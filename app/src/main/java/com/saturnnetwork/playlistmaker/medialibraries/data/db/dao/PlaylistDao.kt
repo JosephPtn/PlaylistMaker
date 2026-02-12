@@ -25,8 +25,13 @@ interface PlaylistDao {
     @Query("UPDATE playlist_table SET trackIds = :trackIds WHERE id = :playlistId")
     suspend fun updateTracksId(playlistId: Long, trackIds: String)
 
-    @Query("UPDATE playlist_table SET trackIds = :trackIds WHERE id = :playlistId")
-    suspend fun insertTracksId(trackIds: String, playlistId: Long)
+    @Query("""
+    UPDATE playlist_table 
+    SET trackIds = :trackIds,
+        trackCount = :trackCount
+    WHERE id = :playlistId
+    """)
+    suspend fun insertTracksId(trackIds: String, playlistId: Long, trackCount: Int)
 
     @Query("SELECT * FROM playlist_table WHERE id = :playlistId")
     fun getPlaylistById(playlistId: Long): Flow<PlaylistEntity>

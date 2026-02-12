@@ -186,7 +186,7 @@ class PlayerViewModel(
             } else {
                 val updatedList: List<String> = playlist.trackIds + trackId
                 val jsonString = Json.encodeToString(updatedList)
-                playlistInteractor.insertTracksId(jsonString, playlistId)
+                playlistInteractor.insertTracksId(jsonString, playlistId, updatedList.size)
                 _eventFlow.postValue(InsertPLUIState(
                     plIsAdded = true,
                     olIsExist = false,

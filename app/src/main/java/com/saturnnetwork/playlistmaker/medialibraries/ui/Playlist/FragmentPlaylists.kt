@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -75,16 +76,16 @@ class FragmentPlaylists: Fragment() {
         viewModel.observePlaylist().observe(viewLifecycleOwner) { playlists ->
             if (playlists.isNotEmpty()) {
                 //println(state.playlist)
-                binding.emptyPlaceholder.visibility = View.INVISIBLE
-                binding.titleEmptyPlaceholder.visibility = View.INVISIBLE
-                binding.recyclerView.visibility = View.VISIBLE
+                binding.emptyPlaceholder.isVisible = false
+                binding.titleEmptyPlaceholder.isVisible = false
+                binding.recyclerView.isVisible = true
                 val layoutManager = binding.recyclerView.layoutManager as? GridLayoutManager
                 layoutManager?.requestLayout()
                 adapter.updateGroups(playlists)
             } else {
-                binding.emptyPlaceholder.visibility = View.VISIBLE
-                binding.titleEmptyPlaceholder.visibility = View.VISIBLE
-                binding.recyclerView.visibility = View.INVISIBLE
+                binding.emptyPlaceholder.isVisible = true
+                binding.titleEmptyPlaceholder.isVisible = true
+                binding.recyclerView.isVisible = false
             }
         }
 

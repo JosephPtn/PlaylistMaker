@@ -60,7 +60,7 @@ class MediaLibrariesViewModel(private val interactor: TrackDBInteractor,
     }
 
     fun setPlaylistName(name: String) {
-        if (name.isNotEmpty() && name.isNotBlank()) {
+        /*if (name.isNotEmpty() && name.isNotBlank()) {
             _cPViewState.update { currentState ->
                 currentState.copy(createBtnActive = true)
             }
@@ -68,6 +68,9 @@ class MediaLibrariesViewModel(private val interactor: TrackDBInteractor,
             _cPViewState.update { currentState ->
                 currentState.copy(createBtnActive = false)
             }
+        }*/
+        _cPViewState.update { currentState ->
+            currentState.copy(createBtnActive = name.isNotEmpty() && name.isNotBlank())
         }
     }
 
