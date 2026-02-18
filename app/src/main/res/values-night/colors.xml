@@ -2,6 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="yp_light_gray">#E6E8EB</color>
+    <color name="back_button">#FFFFFF</color>
     <color name="background_activity_main">#1A1B22</color>
     <color name="background_activity_settings">#1A1B22</color>
     <color name="textColor_activity_settings">#FFFFFF</color>
@@ -28,6 +30,17 @@
     <color name="playbackControlColor1">#FFFFFF</color>
     <color name="playbackControlColor2">#1A1B22</color>
     <color name="favorite_picture">#F56B6C</color>
+
+    <!-- FragmentCreatePlaylist-->
+    <color name="_text_input_box_color">#FFFFFFFF</color>
+    <color name="_text_input_hint_color">#FFFFFFFF</color>
+    <color name="hintTextColor">#FFFFFF</color>
+    <color name="textColorHint">#FFFFFF</color>
+    <color name="create_playlist_button">#AEAFB4</color>
+    <color name="create_playlist_button_active">#3772E7</color>
+
+    <!-- playlist_card-->
+    <color name="playlist_card_text_color">#FFFFFF</color>
 
     <color name="YP_White">#FFFFFF</color>
     <color name="YP_Black">#1A1B22</color>

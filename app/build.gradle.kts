@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
     id("kotlin-kapt")
+    kotlin("plugin.serialization") version "1.5.0"
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -50,6 +52,8 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.room.common.jvm)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.cardview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -80,5 +84,7 @@ dependencies {
     // поддержку Flow
     // корутины вместо колбэков
     implementation("androidx.room:room-ktx:2.7.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
 }

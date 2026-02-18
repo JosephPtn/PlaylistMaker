@@ -33,4 +33,20 @@
     <string name="new_playlist">Новый плейлист</string>
     <string name="you_havent_playlist">Вы не создали\nни одного плейлиста</string>
 
+    <!-- create_playlist_fragment-->
+    <string name="name">Название*</string>
+    <string name="description">Описание</string>
+    <string name="create">Создать</string>
+
+    <!-- insert_in_playlist_fragment-->
+    <string name="add_to_playlist">Добавить в плейлист</string>
+
+    <!-- FragmentCreatePlaylist-->
+    <string name="finish_creating_the_playlist">Завершить создание плейлиста?</string>
+    <string name="all_unsaved_data_will_be_lost">Все несохраненные данные будут потеряны</string>
+    <string name="cancel">Отмена</string>
+    <string name="complete">Завершить</string>
+    <string name="playlist">Плейлист</string>
+    <string name="created">cоздан</string>
+
 </resources>

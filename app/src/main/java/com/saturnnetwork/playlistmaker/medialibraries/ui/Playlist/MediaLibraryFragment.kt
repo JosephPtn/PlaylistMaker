@@ -1,4 +1,4 @@
-package com.saturnnetwork.playlistmaker.medialibraries.ui
+package com.saturnnetwork.playlistmaker.medialibraries.ui.Playlist
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.saturnnetwork.playlistmaker.R
 import com.saturnnetwork.playlistmaker.databinding.MediaLibraryFragmentBinding
+import com.saturnnetwork.playlistmaker.medialibraries.ui.MediaLibrariesViewModel
+import com.saturnnetwork.playlistmaker.medialibraries.ui.MediaLibrariesViewPagerAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediaLibraryFragment: Fragment() {
@@ -30,7 +32,7 @@ class MediaLibraryFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.viewPager.adapter = MediaLibrariesViewPagerAdapter(childFragmentManager, lifecycle)
         tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            when(position) {
+            when (position) {
                 0 -> tab.text = getString(R.string.favorite_tracks)
                 1 -> tab.text = getString(R.string.playlists)
             }

@@ -6,6 +6,8 @@ import androidx.room.Room
 import com.google.gson.Gson
 import com.saturnnetwork.playlistmaker.main.data.ThemeRepository
 import com.saturnnetwork.playlistmaker.medialibraries.data.db.AppDatabase
+import com.saturnnetwork.playlistmaker.medialibraries.data.db.PlaylistDatabase
+import com.saturnnetwork.playlistmaker.medialibraries.data.db.converters.PlaylistDbConverter
 import com.saturnnetwork.playlistmaker.search.data.NetworkClient
 import com.saturnnetwork.playlistmaker.search.data.network.ItunesApiService
 import com.saturnnetwork.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -53,6 +55,13 @@ val dataModule = module {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
             .build()
     }
+
+    single {
+        Room.databaseBuilder(androidContext(), PlaylistDatabase::class.java, "playlist_database.db")
+            .build()
+    }
+
+    factory { PlaylistDbConverter() }
 
 
 
